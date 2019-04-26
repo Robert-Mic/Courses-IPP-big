@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <limits.h>
+#include <stdlib.h>
 #include "Graph.h"
 #include "map.h"
 #include "constants.h"
@@ -82,10 +83,10 @@ IntPair checkRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest
 }
 
 int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int from, int finish) {
-    //printf("In %d\n", where);
+    printf("In %d\n", where);
     if (from >= 0) {
         Edge *edge = findEdgeTo(map->graph->tab[where], from);
-        //printf("Marked edge to %d\n", edge->where);
+        printf("Marked edge to %d\n", edge->where);
         if (addIntAfter(edge->routes, route) == ALLOCATION_FAILURE)
             return ALLOCATION_FAILURE;
     }
@@ -101,7 +102,7 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
             && (dist[edge->where] != 0) != (edge->where == finish)
             && edge->year >= oldest) {
 
-            //printf("Marked edge to %d\n", edge->where);
+            printf("Marked edge to %d\n", edge->where);
             addIntAfter(edge->routes, route);
             int result = markRouteDfs(map, route, dist, edge->where, oldest, where, finish);
             if (result == ALLOCATION_FAILURE) {
@@ -116,14 +117,14 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
     return ALLOCATION_SUCCESS;
 }
 
-int markRoute(Map *map, int route, uint64_t *dist) {
-    IntPair result = checkRouteDfs(map, route, dist, map->routes[route].finish,
-            INT_MAX, map->routes[route].start);
+int markRoute(Map *map, int route, uint64_t *dist, int start, int finish) {
+    IntPair result = checkRouteDfs(map, route, dist, finish, INT_MAX, start);
     if (result.second == true) {
-        int res = markRouteDfs(map, route, dist, map->routes[route].finish,
-                result.first, -1, map->routes[route].start);
+        int res = markRouteDfs(map, route, dist, finish, result.first, -1, start);
         if (res == ALLOCATION_FAILURE)
             return ALLOCATION_FAILURE;
     }
+    else
+        return ALLOCATION_FAILURE;
     return ALLOCATION_SUCCESS;
 }

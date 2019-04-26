@@ -4,6 +4,7 @@
 #include "vector_stringvector.h"
 #include "vector_verticevector.h"
 #include "vector_charvector.h"
+#include "logic.h"
 #include "constants.h"
 #include "Graph.h"
 #include <stdlib.h>
@@ -274,7 +275,7 @@ bool newRoute(Map *map, unsigned routeId,
         free(dist);
         return false;
     }
-    if (markRoute(map, routeId, dist) == ALLOCATION_FAILURE) {
+    if (markRoute(map, routeId, dist, city1_num, city2_num) == ALLOCATION_FAILURE) {
         map->routes[routeId].start = -1;
         free(dist);
         return false;
@@ -302,7 +303,80 @@ bool newRoute(Map *map, unsigned routeId,
  * pamięci.
  */
 bool extendRoute(Map *map, unsigned routeId, const char *city) {
-    return true;
+    if (routeId <= 0
+        || routeId >= MAX_ROUTES
+        || invalidCityName(city)
+        || map->routes[routeId].start == -1)
+        return false;
+    int city_num = find(map->name_to_int, city);
+    if (city_num == -1) {
+        return false;
+    }
+
+    uint64_t *dist = malloc(sizeof(uint64_t) * map->city_number);
+    if (dist == NULL) {
+        return false;
+    }
+
+
+    int start = map->routes[routeId].start;
+    int finish = map->routes[routeId].finish;
+    uint64_t distance1, distance2;
+
+    if (dijkstra(map, routeId, dist, finish, city_num) == ALLOCATION_FAILURE) {
+        free(dist);
+        return false;
+    }
+    IntPair result1;
+    distance1 = dist[city_num];
+    if (distance1 == UINT64_MAX)
+        result1 = newIntPair(0, false);
+    else
+        result1 = checkRouteDfs(map, routeId, dist, city_num, INT_MAX, finish);
+
+    if (dijkstra(map, routeId, dist, city_num, start) == ALLOCATION_FAILURE) {
+        free(dist);
+        return false;
+    }
+    IntPair result2;
+    distance2 = dist[start];
+    if (distance2 == UINT64_MAX)
+        result2 = newIntPair(0, false);
+    else
+        result2 = checkRouteDfs(map, routeId, dist, start, INT_MAX, city_num);
+
+
+    if (result1.second == false) {
+        if (result2.second == true) {
+            printf("1\n");
+            return extRoute(map, routeId, dist, city_num, start);
+        }
+        else {
+            free(dist);
+            printf("2\n");
+            return false;
+        }
+    }
+    else if (result1.second == result2.second) { //both are true
+        if (distance1 < distance2 || (distance1 == distance2 && result1.first > result2.first)) {
+            printf("3\n");
+            return extRoute(map, routeId, dist, finish, city_num);
+        }
+        else if (distance1 == distance2 && result1.first == result2.first) {
+            free(dist);
+            printf("4\n");
+            return false;
+        }
+        else if (distance1 > distance2 || (distance1 == distance2 && result1.first < result2.first)) {
+            printf("5\n");
+            return extRoute(map, routeId, dist, city_num, start);
+        }
+    }
+    else { //result1.second is true and result2.second is false
+        printf("6\n");
+        return extRoute(map, routeId, dist, finish, city_num);
+    }
+    return false;
 }
 
 /** @brief Usuwa odcinek drogi między dwoma różnymi miastami.
@@ -353,67 +427,52 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
     int route = (int)routeId;
     int start = map->routes[route].start;
     int finish = map->routes[route].finish;
+    printf("S & F = %d; %d\n", start, finish);
     int last = -1;
     Vertice *vertice = map->graph->tab[start];
 
     sprintf(buff, "%d", route);
-    if (charVectorPushString(output, buff) == ALLOCATION_FAILURE) {
-        freeCharVector(output);
-        free(buff);
+    if (addOrFree(output, buff, buff))
         return NULL;
-    }
-    if (charVectorPush(output, ';') == ALLOCATION_FAILURE) {
-        freeCharVector(output);
-        free(buff);
+    if (addOrFree(output, ";", buff))
         return NULL;
-    }
-
-    if (charVectorPushString(output, map->int_to_name->tab[start]) == ALLOCATION_FAILURE) {
-        freeCharVector(output);
-        free(buff);
+    if (addOrFree(output, map->int_to_name->tab[start], buff))
         return NULL;
-    }
 
     while (vertice->number != finish) {
         //printf("In vertice %d\n", vertice->number);
         Edge *edge = findEdgeWithRoute(vertice, route, last);
-        if (charVectorPush(output, ';') == ALLOCATION_FAILURE) {
-            freeCharVector(output);
-            free(buff);
+        if (addOrFree(output, ";", buff))
             return NULL;
-        }
+
         sprintf(buff, "%d", edge->length);
-        if (charVectorPushString(output, buff) == ALLOCATION_FAILURE) {
-            freeCharVector(output);
-            free(buff);
+        if (addOrFree(output, buff, buff))
             return NULL;
-        }
-        if (charVectorPush(output, ';') == ALLOCATION_FAILURE) {
-            freeCharVector(output);
-            free(buff);
+
+        if (addOrFree(output, ";", buff))
             return NULL;
-        }
+
         sprintf(buff, "%d", edge->year);
-        if (charVectorPushString(output, buff) == ALLOCATION_FAILURE) {
-            freeCharVector(output);
-            free(buff);
+        if (addOrFree(output, buff, buff))
             return NULL;
-        }
-        if (charVectorPush(output, ';') == ALLOCATION_FAILURE) {
-            freeCharVector(output);
-            free(buff);
+
+        if (addOrFree(output, ";", buff))
             return NULL;
-        }
+
         last = vertice->number;
         vertice = map->graph->tab[edge->where];
-        if (charVectorPushString(output, map->int_to_name->tab[vertice->number]) == ALLOCATION_FAILURE) {
-            freeCharVector(output);
-            free(buff);
+        if (addOrFree(output, map->int_to_name->tab[vertice->number], buff))
             return NULL;
-        }
+    }
+
+    if (charVectorPush(output, 0) == ALLOCATION_FAILURE) {
+        freeCharVector(output);
+        free(buff);
+        return NULL;
     }
     char *ret = output->tab;
     printf("%s\n", ret);
+    fflush(stdin);
     free(buff);
     free(output);
     return ret;
