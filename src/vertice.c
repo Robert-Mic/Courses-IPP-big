@@ -21,6 +21,7 @@ Vertice *newVertice(int number) {
 
 void freeVertice(Vertice *vertice) {
     freeEdgeVector(vertice->edges);
+    free(vertice);
 }
 
 Edge* findEdgeTo(Vertice *vertice, int city) {

@@ -171,6 +171,7 @@ bool addRoad(Map *map, const char *city1, const char *city2,
         city2_num = map->city_number;
         map->city_number++;
     }
+
     if (findEdgeTo(map->graph->tab[city1_num], city2_num)) {
         return false;
     }
@@ -412,6 +413,7 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         }
     }
     char *ret = output->tab;
+    printf("%s\n", ret);
     free(buff);
     free(output);
     return ret;
