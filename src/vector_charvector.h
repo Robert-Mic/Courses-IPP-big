@@ -14,7 +14,7 @@ struct CharVector {
 
 CharVector* newCharVector();
 
-int charVectorPush(CharVector *vector, const char value);
+int charVectorPush(CharVector *vector, char value);
 
 int charVectorPushString(CharVector *vector, char *value);
 

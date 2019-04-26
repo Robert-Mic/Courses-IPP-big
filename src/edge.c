@@ -15,6 +15,7 @@ Edge* newEdge(int where, int length, int year) {
     new_edge->where = where;
     new_edge->length = length;
     new_edge->year = year;
+    return new_edge;
 }
 
 void freeEdge(Edge *edge) {

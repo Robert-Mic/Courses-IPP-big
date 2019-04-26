@@ -10,7 +10,7 @@
 CityList* newCityList(const char *name, int number) {
     char *new_mem = strdup(name);
     if (new_mem == NULL)
-        return ALLOCATION_FAILURE;
+        return NULL;
 
     CityList* list = malloc(sizeof(CityList));
     if (list == NULL) {

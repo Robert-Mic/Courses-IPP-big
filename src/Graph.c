@@ -63,7 +63,7 @@ IntPair checkRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest
     for (int i = 0; i < map->graph->tab[where]->edges->current_size; i++) {
         Edge *edge = map->graph->tab[where]->edges->tab[i];
         if (dist[edge->where] == dist[where] - edge->length
-            && (dist[edge->where] != 0 ^ edge->where == finish)) {
+            && (dist[edge->where] != 0) != (edge->where == finish)) {
             IntPair result = checkRouteDfs(map, route, dist, edge->where, min(edge->year, oldest), finish);
             if (intPairCmp(result, result1) ) {
                 result2 = result1;
@@ -97,7 +97,7 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
         Edge *edge = map->graph->tab[where]->edges->tab[i];
 
         if (dist[edge->where] == dist[where] - edge->length
-            && (dist[edge->where] != 0 ^ edge->where == finish)
+            && (dist[edge->where] != 0) != (edge->where == finish)
             && edge->year >= oldest) {
 
             //printf("Marked edge to %d\n", edge->where);

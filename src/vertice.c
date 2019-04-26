@@ -57,13 +57,14 @@ int addEdge(Vertice *vertice, int where, int length, int year) {
 }
 
 void removeEdge(Vertice *vertice, int where) {
-    Edge *to_delete = findEdgeTo(vertice, where);
-    if (to_delete == NULL)
-        return;
-    freeEdge(to_delete);
-    if (vertice->edges->current_size - 1 >= 0) {
-        to_delete = vertice->edges->tab[vertice->edges->current_size - 1];
-        vertice->edges->tab[vertice->edges->current_size - 1] = NULL;
-        edgeVectorPop(vertice->edges);
+    int size = vertice->edges->current_size;
+    for (int i = 0; i < size; i++) {
+        Edge *edge = vertice->edges->tab[i];
+        if (edge->where == where) {
+            vertice->edges->tab[i] = vertice->edges->tab[size - 1];
+            vertice->edges->tab[size - 1] = edge;
+            edgeVectorPop(vertice->edges);
+            return;
+        }
     }
 }
