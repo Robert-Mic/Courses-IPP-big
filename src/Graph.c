@@ -49,6 +49,7 @@ int dijkstra(Map *map, int without_route, uint64_t *dist, int start, int finish)
             }
         }
     }
+    freeDistList(queue);
     return ALLOCATION_SUCCESS;
 }
 

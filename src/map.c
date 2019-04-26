@@ -366,7 +366,7 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         free(buff);
         return NULL;
     }
-    printf("%d\n", start);
+
     if (charVectorPushString(output, map->int_to_name->tab[start]) == ALLOCATION_FAILURE) {
         freeCharVector(output);
         free(buff);
@@ -412,6 +412,7 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         }
     }
     char *ret = output->tab;
+    free(buff);
     free(output);
     return ret;
 }
