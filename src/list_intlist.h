@@ -24,5 +24,6 @@ void removeNextInt(IntList *it);
 
 IntList* nextInt(IntList *it);
 
+IntList* copy(IntList *old);
 
 #endif //DROGI_INTLIST_H

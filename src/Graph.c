@@ -11,25 +11,7 @@
 #include "utils.h"
 #include "list_vertice_distancelist.h"
 
-int dijkstra(Map *map, int without_route, uint64_t *dist, int start, int finish) {
-    int size = map->city_number;
-    for (int i = 0; i < size; i++) {
-        dist[i] = UINT64_MAX;
-    }
-
-    if (without_route > 0) {
-        int route_start = map->routes[without_route].start;
-        int route_finish = map->routes[without_route].finish;
-        Vertice *vertice = map->graph->tab[route_start];
-        int last = -1;
-        while (vertice->number != route_finish) {
-            dist[vertice->number] = 0;
-            Edge *edge = findEdgeWithRoute(vertice, without_route, last);
-            last = vertice->number;
-            vertice = map->graph->tab[edge->where];
-        }
-    }
-
+int dixtra(Map *map, uint64_t *dist, int start, int finish) {
     DistList *queue = newDistList(NULL, 0);
     if (queue == NULL)
         return ALLOCATION_FAILURE;
@@ -53,6 +35,68 @@ int dijkstra(Map *map, int without_route, uint64_t *dist, int start, int finish)
     freeDistList(queue);
     return ALLOCATION_SUCCESS;
 }
+
+int dijkstra(Map *map, int without_route, uint64_t *dist, int start, int finish) {
+    int size = map->city_number;
+    for (int i = 0; i < size; i++) {
+        dist[i] = UINT64_MAX;
+    }
+
+    if (without_route > 0) {
+        int route_start = map->routes[without_route].start;
+        int route_finish = map->routes[without_route].finish;
+        Vertice *vertice = map->graph->tab[route_start];
+        int last = -1;
+        while (vertice->number != route_finish) {
+            dist[vertice->number] = 0;
+            Edge *edge = findEdgeWithRoute(vertice, without_route, last);
+            last = vertice->number;
+            vertice = map->graph->tab[edge->where];
+        }
+    }
+
+    return dixtra(map, dist, start, finish);
+}
+
+int dijkstra2(Map *map, int without_route, uint64_t *dist, int start, int finish) {
+    int size = map->city_number;
+    for (int i = 0; i < size; i++) {
+        dist[i] = UINT64_MAX;
+    }
+
+    if (without_route > 0) {
+        int route_start = map->routes[without_route].start;
+        int route_finish = map->routes[without_route].finish;
+        int last;
+        Vertice *vertice;
+        Edge *edge;
+
+        last = -1;
+        vertice = map->graph->tab[route_start];
+        dist[vertice->number] = 0;
+        edge = findEdgeWithRoute(vertice, without_route, last);
+        while (edge != NULL) {
+            dist[vertice->number] = 0;
+            last = vertice->number;
+            vertice = map->graph->tab[edge->where];
+            edge = findEdgeWithRoute(vertice, without_route, last);
+        }
+
+        last = -1;
+        vertice = map->graph->tab[route_finish];
+        dist[vertice->number] = 0;
+        edge = findEdgeWithRoute(vertice, without_route, last);
+        while (edge != NULL) {
+            dist[vertice->number] = 0;
+            last = vertice->number;
+            vertice = map->graph->tab[edge->where];
+            edge = findEdgeWithRoute(vertice, without_route, last);
+        }
+    }
+
+    return dixtra(map, dist, start, finish);
+}
+
 
 IntPair checkRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int finish) {
     if (finish == where) {

@@ -7,6 +7,7 @@
 #include "logic.h"
 #include "constants.h"
 #include "Graph.h"
+#include <limits.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -397,6 +398,69 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
  * pamięci.
  */
 bool removeRoad(Map *map, const char *city1, const char *city2) {
+    if (invalidCityName(city1)
+        || invalidCityName(city2))
+        return false;
+
+    int city1_num = find(map->name_to_int, city1);
+    int city2_num = find(map->name_to_int, city2);
+
+    if (city1_num == -1 || city2_num == -1) {
+        return false;
+    }
+
+    uint64_t *dist = malloc(sizeof(uint64_t) * map->city_number);
+    if (dist == NULL) {
+        return false;
+    }
+
+    Edge *edge = findEdgeTo(map->graph->tab[city1_num], city2_num);
+
+    if (edge == NULL)
+        return false;
+
+    IntList *routes = edge->routes;
+    int length = edge->year;
+    int year = edge->year;
+    edge->routes = NULL;
+
+    IntList *iter = routes->next;
+    bool can_be_deleted = true;
+
+    removeEdge(map->graph->tab[city1_num], city2_num);
+    removeEdge(map->graph->tab[city2_num], city2_num);
+
+    while (iter) {
+        int route = iter->val;
+        if (dijkstra2(map, route, dist, city1_num, city2_num) == ALLOCATION_FAILURE) {
+            can_be_deleted = false;
+        }
+        if (dist[city2_num] == UINT64_MAX) {
+            can_be_deleted = false;
+        }
+        IntPair res = checkRouteDfs(map, route, dist, city2_num, INT_MAX, city1_num);
+        if (res.second == false) {
+            can_be_deleted = false;
+        }
+        iter = nextInt(iter);
+    }
+
+    if (can_be_deleted == false) {
+        recoverEdge(map, city1_num, city2_num, routes, length, year); //ignoring value as we return false anyway
+        return false;
+    }
+
+    iter = routes->next;
+    while (iter) {
+        int route = iter->val;
+        if (dijkstra2(map, route, dist, city1_num, city2_num) == ALLOCATION_FAILURE) {
+            return false;
+        }
+        markRouteDfs(map, route, dist, city2_num, INT_MAX, -1, city1_num);
+        iter = nextInt(iter);
+    }
+
+    freeIntList(routes);
     return true;
 }
 

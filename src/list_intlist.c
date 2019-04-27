@@ -53,3 +53,16 @@ IntList* nextInt(IntList *it) {
         return NULL;
     return it->next;
 }
+
+IntList* copy(IntList *old) {
+    IntList *ret = newIntList(-1);
+    if (ret == NULL)
+        return NULL;
+    while (old) {
+        if (addIntAfter(ret, old->val) == ALLOCATION_FAILURE) {
+            freeIntList(ret);
+            return NULL;
+        }
+        nextInt(old);
+    }
+}

@@ -32,3 +32,21 @@ int addOrFree(CharVector *vector, char *val, char *free_buff) {
     }
     return ALLOCATION_SUCCESS;
 }
+
+bool recoverEdge(Map *map, int city1_num, int city2_num, IntList *routes, int length, int year) {
+    Edge *edge1 = newEdge(city2_num, length, year);
+    if (edge1 == NULL)
+        return false;
+    Edge *edge2 = newEdge(city1_num, length, year);
+    if (edge2 == NULL)
+        return false;
+    edge1->routes = routes;
+    edge2->routes = copy(routes->next);
+    if (edge2->routes == NULL)
+        return false;
+    if (edgeVectorPush(map->graph->tab[city1_num]->edges, edge1) == ALLOCATION_FAILURE)
+        return false;
+    if (edgeVectorPush(map->graph->tab[city2_num]->edges, edge1) == ALLOCATION_FAILURE)
+        return false;
+    return ALLOCATION_SUCCESS;
+}

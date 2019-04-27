@@ -23,7 +23,36 @@ set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
 set(SOURCE_FILES
         src/map.c
         src/map.h
-        src/map_main.c src/vector_edgesvector.c src/vector_edgesvector.h src/constants.h src/hashmap.c src/hashmap.h src/list_citylist.c src/list_citylist.h src/vector_stringvector.c src/vector_stringvector.h src/edge.c src/edge.h src/list_intlist.c src/list_intlist.h src/vertice.c src/vertice.h src/vector_verticevector.c src/vector_verticevector.h src/routedescription.c src/routedescription.h src/vector_charvector.c src/vector_charvector.h src/Graph.c src/Graph.h src/utils.c src/utils.h src/list_vertice_distancelist.c src/list_vertice_distancelist.h)
+        src/map_main.c
+        src/vector_edgesvector.c
+        src/vector_edgesvector.h
+        src/constants.h
+        src/hashmap.c
+        src/hashmap.h
+        src/list_citylist.c
+        src/list_citylist.h
+        src/vector_stringvector.c
+        src/vector_stringvector.h
+        src/edge.c
+        src/edge.h
+        src/list_intlist.c
+        src/list_intlist.h
+        src/vertice.c
+        src/vertice.h
+        src/vector_verticevector.c
+        src/vector_verticevector.h
+        src/routedescription.c
+        src/routedescription.h
+        src/vector_charvector.c
+        src/vector_charvector.h
+        src/Graph.c
+        src/Graph.h
+        src/utils.c
+        src/utils.h
+        src/list_vertice_distancelist.c
+        src/list_vertice_distancelist.h
+        src/logic.c
+        src/logic.h)
 
 # Wskazujemy plik wykonywalny.
 add_executable(map ${SOURCE_FILES})

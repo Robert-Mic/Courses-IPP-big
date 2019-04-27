@@ -11,6 +11,8 @@
 
 int dijkstra(Map *map, int without_route, uint64_t *dist, int start, int finish);
 
+int dijkstra2(Map *map, int without_route, uint64_t *dist, int start, int finish);
+
 int markRoute(Map *map, int route, uint64_t *dist, int start, int finish);
 
 IntPair checkRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int finish);
