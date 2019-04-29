@@ -24,7 +24,7 @@ struct RoadEdge {
 };
 
 /**
- * Yes
+ * Graph Edge structure.
  */
 typedef struct RoadEdge Edge;
 
