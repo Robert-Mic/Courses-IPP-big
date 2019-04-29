@@ -100,7 +100,7 @@ int main() {
 
     str = getRouteDescription(m, 10);
     assert(strcmp(str, "10;Alinów;1;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
-                     ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
+                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
     free((void *)str);
 
 
@@ -121,7 +121,35 @@ int main() {
 
     assert(!extendRoute(m, 10, "Grzegrzewo"));
 
-     deleteMap(m);
+    assert(!extendRoute(m, 10, "Alinów"));
+
+    assert(addRoad(m, "Cielińsk-Niekłańsk", "Slima", 5, 2021));
+    assert(!extendRoute(m, 10, "Slima"));
+    assert(removeRoad(m, "Slima", "Cielińsk-Niekłańsk"));
+
+    str = getRouteDescription(m, 10);
+    assert(strcmp(str, "10;Alinów;11;2022;Dąb Stary;3;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
+                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
+    free((void *)str);
+
+    assert(!extendRoute(m, 10, "Homilcin"));
+
+
+    assert(addRoad(m, "AA" , "AB", 2, 11));
+    assert(addRoad(m, "AA" , "AC", 3, 10));
+    assert(addRoad(m, "AB" , "AD", 2, 12));
+    assert(addRoad(m, "AC" , "AD", 1, 9));
+
+    assert(addRoad(m, "AD" , "AE", 3, 3));
+    assert(addRoad(m, "AD" , "AF", 2, 1));
+    assert(addRoad(m, "AE" , "AG", 1, 4));
+    assert(addRoad(m, "AF" , "AG", 2, 2));
+
+    assert(!newRoute(m, 41, "AA", "AG"));
+
+
+
+    deleteMap(m);
 
     return 0;
 }

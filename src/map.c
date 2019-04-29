@@ -272,9 +272,12 @@ bool newRoute(Map *map, unsigned routeId,
 
     map->routes[routeId].start = city1_num;
     map->routes[routeId].finish = city2_num;
-
     if (dijkstra(map, -1, dist, city1_num, city2_num) == ALLOCATION_FAILURE) {
         map->routes[routeId].start = -1;
+        free(dist);
+        return false;
+    }
+    if (dist[city2_num] == UINT64_MAX) {
         free(dist);
         return false;
     }
@@ -376,6 +379,10 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
         else if (distance1 > distance2 || (distance1 == distance2 && result1.first < result2.first)) {
             //printf("5\n");
             return extRoute(map, routeId, dist, city_num, start);
+        }
+        else {
+            free(dist);
+            return false;
         }
     }
     else { //result1.second is true and result2.second is false

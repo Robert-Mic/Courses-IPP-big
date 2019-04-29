@@ -116,26 +116,32 @@ IntPair checkRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest
         if (dist[edge->where] == dist[where] - edge->length
             && (dist[edge->where] != 0) != (edge->where == finish)) {
             IntPair result = checkRouteDfs(map, route, dist, edge->where, min(edge->year, oldest), finish);
-            if (intPairCmp(result, result1) ) {
+            //printf("In %d, %s Got %d, b(%d)\n", where, map->int_to_name->tab[where], result.first, result.second);
+            if (intPairCmp(result, result1) > 0) {
                 result2 = result1;
                 result1 = result;
             }
+            else if (intPairCmp(result, result2) > 0){
+                result2 = result;
+            }
         }
     }
-
+    //printf("%d %d %d %d\n", result1.first, result1.second, result2.first, result2.second);
     if (result1.first == result2.first) {
+        //printf("In %d, %s returning %d, b(%d)\n", where, map->int_to_name->tab[where], result1.first, false);
         return newIntPair(result1.first, false);
     }
     else {
+        //printf("In %d, %s returning %d, b(%d)\n", where, map->int_to_name->tab[where], result1.first, result1.second);
         return result1;
     }
 }
 
 int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int from, int finish) {
-    //printf("In %d\n", where);
+    //printf("In %d, %s\n", where, map->int_to_name->tab[where]);
     if (from >= 0) {
         Edge *edge = findEdgeTo(map->graph->tab[where], from);
-        //printf("Marked edge to %d\n", edge->where);
+        //printf("Marked edge to %d, %s\n", edge->where, map->int_to_name->tab[edge->where]);
         if (addIntAfter(edge->routes, route) == ALLOCATION_FAILURE)
             return ALLOCATION_FAILURE;
     }
@@ -151,7 +157,7 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
             && (dist[edge->where] != 0) != (edge->where == finish)
             && edge->year >= oldest) {
 
-            //printf("Marked edge to %d\n", edge->where);
+            //printf("Marked edge to %d, %s\n", edge->where, map->int_to_name->tab[edge->where]);
             addIntAfter(edge->routes, route);
             int result = markRouteDfs(map, route, dist, edge->where, oldest, where, finish);
             if (result == ALLOCATION_FAILURE) {
