@@ -1,7 +1,7 @@
 /** @file
- * Interfejs klasy przechowującej mapę dróg krajowych
+ * The interface of the class that stores a map of routes.
  *
- * @author Łukasz Kamiński <kamis@mimuw.edu.pl>, Marcin Peczarski <marpe@mimuw.edu.pl>
+ * @author Łukasz Kamiński <kamis@mimuw.edu.pl>, Marcin Peczarski <marpe@mimuw.edu.pl>, Robert Michna <rm406247@students.mimuw.edu.pl>
  * @copyright Uniwersytet Warszawski
  * @date 20.03.2019
  */
@@ -16,7 +16,7 @@
 #include "routedescription.h"
 
 /**
- * Struktura przechowująca mapę dróg krajowych.
+ * A structure holding the map of routes.
  */
 typedef struct Map Map;
 
@@ -28,93 +28,85 @@ struct Map {
     RouteDesc *routes;
 };
 
-/** @brief Tworzy nową strukturę.
- * Tworzy nową, pustą strukturę niezawierającą żadnych miast, odcinków dróg ani
- * dróg krajowych.
- * @return Wskaźnik na utworzoną strukturę lub NULL, gdy nie udało się
- * zaalokować pamięci.
+/** @brief Creates a new map.
+ * Creates new, empty structure, that does not hold any city, roads, nor routes.
+ * @return A pointer to the created structure or NULL, if memory allocation failed.
  */
 Map* newMap(void);
 
-/** @brief Usuwa strukturę.
- * Usuwa strukturę wskazywaną przez @p map.
- * Nic nie robi, jeśli wskaźnik ten ma wartość NULL.
- * @param[in] map        – wskaźnik na usuwaną strukturę.
+/** @brief Deletes map structure.
+ * Deletes the structure pointed to by @p map.
+ * Does nothing if the pointer is NULL.
+ * @param[in] map        – A pointer to the structure that this function deletes.
  */
 void deleteMap(Map *map);
 
-/** @brief Dodaje do mapy odcinek drogi między dwoma różnymi miastami.
- * Jeśli któreś z podanych miast nie istnieje, to dodaje go do mapy, a następnie
- * dodaje do mapy odcinek drogi między tymi miastami.
- * @param[in,out] map    – wskaźnik na strukturę przechowującą mapę dróg;
- * @param[in] city1      – wskaźnik na napis reprezentujący nazwę miasta;
- * @param[in] city2      – wskaźnik na napis reprezentujący nazwę miasta;
- * @param[in] length     – długość w km odcinka drogi;
- * @param[in] builtYear  – rok budowy odcinka drogi.
- * @return Wartość @p true, jeśli odcinek drogi został dodany.
- * Wartość @p false, jeśli wystąpił błąd: któryś z parametrów ma niepoprawną
- * wartość, obie podane nazwy miast są identyczne, odcinek drogi między tymi
- * miastami już istnieje lub nie udało się zaalokować pamięci.
+/** @brief Adds a road to the map that goes between @p city1 and @p city2.
+ * If one of the cities does not exist it creates it and adds the edge
+ * between them.
+ * @param[in,out] map    – A pointer to the structure that stores the map of the roads;
+ * @param[in] city1      – A pointer to an array of characters that holds the name of city1;
+ * @param[in] city2      – A pointer to an array of characters that holds the name of city2;
+ * @param[in] length     – The length of the road in kilometers;
+ * @param[in] builtYear  – The initial year the road was created at.
+ * @return Returns @p true if the road was successfully added.
+ * Returns @p false if one of the following occured: one of the parameters has illegal value,
+ * the city names are identical, the road between the cities already exists,
+ * the function failed to allocate memory.
  */
 bool addRoad(Map *map, const char *city1, const char *city2,
              unsigned length, int builtYear);
 
-/** @brief Modyfikuje rok ostatniego remontu odcinka drogi.
- * Dla odcinka drogi między dwoma miastami zmienia rok jego ostatniego remontu
- * lub ustawia ten rok, jeśli odcinek nie był jeszcze remontowany.
- * @param[in,out] map    – wskaźnik na strukturę przechowującą mapę dróg;
- * @param[in] city1      – wskaźnik na napis reprezentujący nazwę miasta;
- * @param[in] city2      – wskaźnik na napis reprezentujący nazwę miasta;
- * @param[in] repairYear – rok ostatniego remontu odcinka drogi.
- * @return Wartość @p true, jeśli modyfikacja się powiodła.
- * Wartość @p false, jeśli wystąpił błąd: któryś z parametrów ma niepoprawną
- * wartość, któreś z podanych miast nie istnieje, nie ma odcinka drogi między
- * podanymi miastami, podany rok jest wcześniejszy niż zapisany dla tego odcinka
- * drogi rok budowy lub ostatniego remontu.
+/** @brief Updates the year the road was created at.
+ * Updates the year of last modification of a given road edge, or
+ * sets it if it hasn't been yet modificated.
+ * @param[in,out] map    – A pointer to the structure that stores the map of the roads;
+ * @param[in] city1      – A pointer to an array of characters that holds the name of city1;
+ * @param[in] city2      – A pointer to an array of characters that holds the name of city2;
+ * @param[in] repairYear – The year of the last modification.
+ * @return Returns @p true, if the update succeeded.
+ * Returns @p false if one of the following occured: one of the parameters has illegal value,
+ * one of the cities does not exists, there is no existing road edge between the two cities,
+ * the specified year if older that the year stored before on the edge, the function failed
+ * to allocate memory.
  */
 bool repairRoad(Map *map, const char *city1, const char *city2, int repairYear);
 
-/** @brief Łączy dwa różne miasta drogą krajową.
- * Tworzy drogę krajową pomiędzy dwoma miastami i nadaje jej podany numer.
- * Wśród istniejących odcinków dróg wyszukuje najkrótszą drogę. Jeśli jest
- * więcej niż jeden sposób takiego wyboru, to dla każdego wariantu wyznacza
- * wśród wybranych w nim odcinków dróg ten, który był najdawniej wybudowany lub
- * remontowany i wybiera wariant z odcinkiem, który jest najmłodszy.
- * @param[in,out] map    – wskaźnik na strukturę przechowującą mapę dróg;
- * @param[in] routeId    – numer drogi krajowej;
- * @param[in] city1      – wskaźnik na napis reprezentujący nazwę miasta;
- * @param[in] city2      – wskaźnik na napis reprezentujący nazwę miasta.
- * @return Wartość @p true, jeśli droga krajowa została utworzona.
- * Wartość @p false, jeśli wystąpił błąd: któryś z parametrów ma niepoprawną
- * wartość, istnieje już droga krajowa o podanym numerze, któreś z podanych
- * miast nie istnieje, obie podane nazwy miast są identyczne, nie można
- * jednoznacznie wyznaczyć drogi krajowej między podanymi miastami lub nie udało
- * się zaalokować pamięci.
+/** @brief Creates a route between two cities.
+ * Creates a route between two cities and sets it the specified ID.
+ * This function searches for the shortest path between the two cities, and
+ * if there is more than one option, it picks the path which's oldest path
+ * is the youngest.
+ * @param[in,out] map    – A pointer to the structure that stores the map of the roads;
+ * @param[in] routeId    – route ID;
+ * @param[in] city1      – A pointer to an array of characters that holds the name of city1;
+ * @param[in] city2      – A pointer to an array of characters that holds the name of city2;
+ * @return Returns @p true if the route was successfully created.
+ * Returns @p false if one of the following occured: one of the parameters has illegal value,
+ * a route of the specified number already exists, at least one of the specified cities does
+ * not exist, both city names are identical, the function could not unambiguously choose the
+ * path, the function failed to allocate memory.
  */
 bool newRoute(Map *map, unsigned routeId,
               const char *city1, const char *city2);
 
-/** @brief Wydłuża drogę krajową do podanego miasta.
- * Dodaje do drogi krajowej nowe odcinki dróg do podanego miasta w taki sposób,
- * aby nowy fragment drogi krajowej był najkrótszy. Jeśli jest więcej niż jeden
- * sposób takiego wydłużenia, to dla każdego wariantu wyznacza wśród dodawanych
- * odcinków dróg ten, który był najdawniej wybudowany lub remontowany i wybiera
- * wariant z odcinkiem, który jest najmłodszy.
- * @param[in,out] map    – wskaźnik na strukturę przechowującą mapę dróg;
- * @param[in] routeId    – numer drogi krajowej;
- * @param[in] city       – wskaźnik na napis reprezentujący nazwę miasta.
- * @return Wartość @p true, jeśli droga krajowa została wydłużona.
- * Wartość @p false, jeśli wystąpił błąd: któryś z parametrów ma niepoprawną
- * nazwę, nie istnieje droga krajowa o podanym numerze, nie ma miasta o podanej
- * nazwie, przez podane miasto już przechodzi droga krajowa o podanym numerze,
- * podana droga krajowa kończy się w podanym mieście, nie można jednoznacznie
- * wyznaczyć nowego fragmentu drogi krajowej lub nie udało się zaalokować
- * pamięci.
+/** @brief Extends the route to the specified city.
+ * Adds to the specified route new edges in such a way that the newly created path
+ * is the shortest. If there is more that one possible way to do this, it picks
+ * the set of road edges which oldest edge is the youngest.
+ * @param[in,out] map    – A pointer to the structure that stores the map of the roads;
+ * @param[in] routeId    – route ID;
+ * @param[in] city      – A pointer to an array of characters that holds the name of city1;
+ * @return Returns @p true if the route was successfully extended.
+ * Returns @p false if one of the following occured: one of the specified parameters has
+ * illegal value, the city with the specified name does not exist, the route already traverses
+ * through the specified city, the specified route ends in the specified city, the function could
+ * not unambiguously choose the path, the function failed to allocate memory.
  */
 bool extendRoute(Map *map, unsigned routeId, const char *city);
 
-/** @brief Usuwa odcinek drogi między dwoma różnymi miastami.
- * Usuwa odcinek drogi między dwoma miastami. Jeśli usunięcie tego odcinka drogi
+/** @brief Removes a road edge between the two cities.
+ * Removes a road edge between specified cities. Jeśli usunięcie tego odcinka drogi
  * powoduje przerwanie ciągu jakiejś drogi krajowej, to uzupełnia ją
  * istniejącymi odcinkami dróg w taki sposób, aby była najkrótsza. Jeśli jest
  * więcej niż jeden sposób takiego uzupełnienia, to dla każdego wariantu
@@ -132,7 +124,7 @@ bool extendRoute(Map *map, unsigned routeId, const char *city);
  */
 bool removeRoad(Map *map, const char *city1, const char *city2);
 
-/** @brief Udostępnia informacje o drodze krajowej.
+/** @brief Gets the information about currently existing route.
  * Zwraca wskaźnik na napis, który zawiera informacje o drodze krajowej. Alokuje
  * pamięć na ten napis. Zwraca pusty napis, jeśli nie istnieje droga krajowa
  * o podanym numerze. Zaalokowaną pamięć trzeba zwolnić za pomocą funkcji free.

@@ -129,8 +129,6 @@ int main() {
 
     assert(!extendRoute(m, 20, "Homilcin"));
 
-    printf("%s", getRouteDescription(m, 20));
-
 
     deleteMap(m);
 

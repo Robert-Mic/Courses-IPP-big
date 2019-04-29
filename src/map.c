@@ -76,6 +76,8 @@ Map* newMap(void) {
  * @param[in] map        – wskaźnik na usuwaną strukturę.
  */
 void deleteMap(Map *map) {
+    if (map == NULL)
+        return;
     freeHashmap(map->name_to_int);
     freeStringVector(map->int_to_name);
     freeVerticeVector(map->graph);
