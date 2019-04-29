@@ -10,10 +10,12 @@
 bool extRoute(Map *map, int route, uint64_t *dist, int start, int finish) {
     if (dijkstra(map, route, dist, start, finish) == ALLOCATION_FAILURE) {
         free(dist);
+        map->routes[route].start = -1;
         return false;
     }
     if (markRoute(map, route, dist, start, finish) == ALLOCATION_FAILURE) {
         free(dist);
+        map->routes[route].start = -1;
         return false;
     }
     if (map->routes[route].finish == start) {

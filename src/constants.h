@@ -12,7 +12,9 @@
 #define false 0
 #endif
 
+/// Constant returned by functions that succeeded in allocating memory.
 #define ALLOCATION_FAILURE 1
+/// Constant returned by functions that failed to allocate memory.
 #define ALLOCATION_SUCCESS 0
 
 #endif //DROGI_CONSTANTS_H
