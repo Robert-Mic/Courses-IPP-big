@@ -45,6 +45,9 @@ bool recoverEdge(Map *map, int city1_num, int city2_num, IntList *routes, int le
         return false;
     }
 
+    freeIntList(edge1->routes);
+    freeIntList(edge2->routes);
+
     edge1->routes = copy(routes->next);
     if (edge1->routes == NULL) {
         freeEdge(edge1);
