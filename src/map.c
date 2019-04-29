@@ -254,7 +254,8 @@ bool newRoute(Map *map, unsigned routeId,
         || routeId >= MAX_ROUTES
         || invalidCityName(city1)
         || invalidCityName(city2)
-        || map->routes[routeId].start != -1)
+        || map->routes[routeId].start != -1
+        || strcmp(city1, city2) == 0)
         return false;
 
     int city1_num = find(map->name_to_int, city1);
@@ -310,8 +311,12 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
         || invalidCityName(city)
         || map->routes[routeId].start == -1)
         return false;
+
     int city_num = find(map->name_to_int, city);
     if (city_num == -1) {
+        return false;
+    }
+    if (isOnRoute(map, routeId, city_num)) {
         return false;
     }
 
@@ -319,7 +324,6 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
     if (dist == NULL) {
         return false;
     }
-
 
     int start = map->routes[routeId].start;
     int finish = map->routes[routeId].finish;

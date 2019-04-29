@@ -19,5 +19,6 @@ IntPair checkRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest
 
 int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int from, int finish);
 
+bool isOnRoute(Map *map, int route, int city);
 
 #endif //DROGI_GRAPH_H

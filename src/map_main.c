@@ -119,6 +119,7 @@ int main() {
                        ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
     free((void *)str);
 
+    assert(!extendRoute(m, 10, "Grzegrzewo"));
 
      deleteMap(m);
 

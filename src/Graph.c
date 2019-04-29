@@ -177,3 +177,19 @@ int markRoute(Map *map, int route, uint64_t *dist, int start, int finish) {
         return ALLOCATION_FAILURE;
     return ALLOCATION_SUCCESS;
 }
+
+bool isOnRoute(Map *map, int route, int city) {
+    int start = map->routes[route].start;
+    int finish = map->routes[route].finish;
+    int last = -1;
+    Vertice *vertice = map->graph->tab[start];
+    while (vertice->number != finish) {
+        if (vertice->number == city) {
+            return true;
+        }
+        Edge *edge = findEdgeWithRoute(vertice, route, last);
+        last = vertice->number;
+        vertice = map->graph->tab[edge->where];
+    }
+    return city == finish;
+}
