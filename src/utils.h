@@ -17,4 +17,6 @@ IntPair newIntPair(int a, int b);
 
 int min(int a, int b);
 
+char* myStrdup(const char *str);
+
 #endif //DROGI_UTILS_H

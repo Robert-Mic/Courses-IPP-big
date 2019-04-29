@@ -494,6 +494,11 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
  * @return Wskaźnik na napis lub NULL, gdy nie udało się zaalokować pamięci.
  */
 char const* getRouteDescription(Map *map, unsigned routeId) {
+    if (routeId <= 0
+        || routeId >= MAX_ROUTES
+        || map->routes[routeId].start == -1)
+        return NULL;
+
     CharVector *output = newCharVector();
     if (output == NULL)
         return NULL;

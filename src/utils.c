@@ -3,6 +3,7 @@
 //
 
 #include <stdlib.h>
+#include <string.h>
 #include "utils.h"
 
 int min(int a, int b) {
@@ -24,4 +25,11 @@ IntPair newIntPair(int a, int b) {
     new_pair.first = a;
     new_pair.second = b;
     return new_pair;
+}
+
+char* myStrdup(const char *str) {
+    char *p = malloc(strlen(str) + 1);
+    if (p)
+        strcpy(p, str);
+    return p;
 }

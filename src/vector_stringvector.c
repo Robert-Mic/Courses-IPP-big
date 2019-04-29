@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "utils.h"
 #include "vector_stringvector.h"
 #include "constants.h"
 
@@ -22,7 +23,7 @@ StringVector* newStringVector() {
 }
 
 int stringVectorPush(StringVector *vector, const char *value) {
-    char *new_mem = strdup(value);
+    char *new_mem = myStrdup(value);
     if (new_mem == NULL)
         return ALLOCATION_FAILURE;
     if (vector->current_size + 1 > vector->max_size) {

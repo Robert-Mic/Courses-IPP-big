@@ -4,11 +4,12 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "utils.h"
 #include "constants.h"
 #include "list_citylist.h"
 
 CityList* newCityList(const char *name, int number) {
-    char *new_mem = strdup(name);
+    char *new_mem = myStrdup(name);
     if (new_mem == NULL)
         return NULL;
 
