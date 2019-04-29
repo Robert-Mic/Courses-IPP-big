@@ -158,12 +158,20 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
             && edge->year >= oldest) {
 
             //printf("Marked edge to %d, %s\n", edge->where, map->int_to_name->tab[edge->where]);
-            addIntAfter(edge->routes, route);
+            if (addIntAfter(edge->routes, route) == ALLOCATION_FAILURE) {
+                if (from >= 0) {
+                    Edge *edge2 = findEdgeTo(map->graph->tab[where], from);
+                    removeNextInt(edge2->routes);
+                }
+                return ALLOCATION_FAILURE;
+            }
             int result = markRouteDfs(map, route, dist, edge->where, oldest, where, finish);
             if (result == ALLOCATION_FAILURE) {
                 removeNextInt(edge->routes);
-                Edge *edge2 = findEdgeTo(map->graph->tab[where], from);
-                removeNextInt(edge2->routes);
+                if (from >= 0) {
+                    Edge *edge2 = findEdgeTo(map->graph->tab[where], from);
+                    removeNextInt(edge2->routes);
+                }
                 return ALLOCATION_FAILURE;
             }
             return ALLOCATION_SUCCESS;

@@ -278,6 +278,7 @@ bool newRoute(Map *map, unsigned routeId,
         return false;
     }
     if (dist[city2_num] == UINT64_MAX) {
+        map->routes[routeId].start = -1;
         free(dist);
         return false;
     }
