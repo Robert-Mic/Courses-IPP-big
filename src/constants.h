@@ -5,6 +5,12 @@
 #ifndef DROGI_CONSTANTS_H
 #define DROGI_CONSTANTS_H
 
+#ifdef NDEBUG
+#define DEBUG 1
+#else
+#define DEBUG 0
+#endif
+
 #ifndef true
 #define true 1
 #endif

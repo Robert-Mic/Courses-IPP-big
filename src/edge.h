@@ -1,6 +1,10 @@
-//
-// Created by rober on 25.04.2019.
-//
+/** @file
+ * Edge class interface
+ *
+ * @author Robert Michna <rm406247@students.mimuw.edu.pl>
+ * @copyright Uniwersytet Warszawski
+ * @date 25.03.2019
+ */
 
 #ifndef DROGI_EDGE_H
 #define DROGI_EDGE_H
@@ -20,7 +24,7 @@ struct RoadEdge {
 };
 
 /**
- *
+ * Yes
  */
 typedef struct RoadEdge Edge;
 

@@ -1,168 +1,138 @@
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <assert.h>
-#include <ctype.h>
-
 #include "map.h"
 
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include "hashmap.h"
+#include "vector_stringvector.h"
+#include "list_intlist.h"
+#include "constants.h"
+#include "map.h"
 
-size_t getline(char **lineptr, size_t *n, FILE *stream) {
-    char *bufptr = NULL;
-    char *p = bufptr;
-    size_t size;
-    int c;
+#undef NDEBUG
 
-    if (lineptr == NULL) {
-        return -1;
-    }
-    if (stream == NULL) {
-        return -1;
-    }
-    if (n == NULL) {
-        return -1;
-    }
-    bufptr = *lineptr;
-    size = *n;
-
-    c = fgetc(stream);
-    if (c == EOF) {
-        return -1;
-    }
-    if (bufptr == NULL) {
-        bufptr = malloc(128);
-        if (bufptr == NULL) {
-            return -1;
-        }
-        size = 128;
-    }
-    p = bufptr;
-    while(c != EOF) {
-        if ((p - bufptr) > (size - 1)) {
-            size = size + 128;
-            bufptr = realloc(bufptr, size);
-            if (bufptr == NULL) {
-                return -1;
-            }
-        }
-        *p++ = c;
-        if (c == '\n') {
-            break;
-        }
-        c = fgetc(stream);
-    }
-
-    *p++ = '\0';
-    *lineptr = bufptr;
-    *n = size;
-
-    return p - bufptr - 1;
-}
-
-
-
-Map* m;
-char* buff;
-unsigned long lineNr;
-
-#define ERROR(x) { \
-	fprintf(stderr, "Line %lu: %s\n", lineNr, x); \
-	for (int i = 0; i < argc; i++) free(argv[i]); \
-	continue; \
-}
-
-#define ERRORN(x) do { \
-	deleteMap(m); \
-	free(buff); \
-	fprintf(stderr, "Line %lu: %s\n", lineNr, x); \
-	exit(1); \
-} while (0);
-
-#define NUM "Wrong number of arguments"
-
-unsigned toUnsigned(const char* str) {
-    size_t len = strlen(str);
-    unsigned result = 0;
-    for (size_t i = 0; i < len; i++) {
-        if (!isdigit(str[i])) ERRORN("Not a number");
-        result = 10 * result + str[i] - '0';
-    }
-    return result;
-}
-
-int toSigned(const char* str) {
-    size_t len = strlen(str);
-    int result = 0, sign = 1;
-    for (size_t i = 0; i < len; i++) {
-        if (!isdigit(str[i])) {
-            if (i == 0 && str[i] == '-') sign = -1;
-            else ERRORN("Not a number");
-        } else {
-            result = 10 * result + str[i] - '0';
-        }
-    }
-    //fprintf(stderr, "%s %d\n", str, sign * result);
-    return sign * result;
-}
+#include <assert.h>
 
 int main() {
-    m = newMap();
+    char const* str;
+
+    Map* m = newMap();
     assert(m);
-    size_t n = 0;
 
-    for (lineNr = 1;; lineNr++) {
-        ssize_t size = getline(&buff, &n, stdin);
-        if (size == -1) break;
-        int argc = 0;
-        char* argv[5];
-        size_t last = 0;
-        if (size > 0 && buff[0] == '#') continue;
-        for (int i = 0; i < size; i++) {
-            if (buff[i] == ';' || buff[i] == '\n') {
-                if (i == 0 && buff[i] == '\n') break;
-                if (argc == 5) ERROR("Too many arguments");
-                argv[argc] = malloc(i - last + 1);
-                if (argv[argc] == NULL) ERROR("Memory error");
-                memcpy(argv[argc], buff + last, i - last);
-                argv[argc++][i - last] = 0;
-                last = i + 1;
-            }
-        }
-        if (argc == 0) continue;
-        bool result = false;
-        bool wypisac = true;
-        if (strcmp(argv[0], "addRoad") == 0) {
-            if (argc != 5) ERROR(NUM);
-            result = addRoad(m, argv[1], argv[2], toUnsigned(argv[3]), toSigned(argv[4]));
-        } else if (strcmp(argv[0], "repairRoad") == 0) {
-            if (argc != 4) ERROR(NUM);
-            result = repairRoad(m, argv[1], argv[2], toSigned(argv[3]));
-        } else if (strcmp(argv[0], "newRoute") == 0) {
-            if (argc != 4) ERROR(NUM);
-            result = newRoute(m, toUnsigned(argv[1]), argv[2], argv[3]);
-        } else if (strcmp(argv[0], "extendRoute") == 0) {
-            if (argc != 3) ERROR(NUM);
-            result = extendRoute(m, toUnsigned(argv[1]), argv[2]);
-        } else if (strcmp(argv[0], "removeRoad") == 0) {
-            if (argc != 3) ERROR(NUM);
-            result = removeRoad(m, argv[1], argv[2]);
-        } else if (strcmp(argv[0], "getRouteDescription") == 0) {
-            if (argc != 2) ERROR(NUM);
-            const char* str = getRouteDescription(m, toUnsigned(argv[1]));
-            if (str == NULL) ERROR("Memory error");
-            printf("%lu: %s\n", lineNr, str);
-            free((void*) str);
-            wypisac = false;
-        } else {
-            ERROR("Wrong command");
-        }
-        if (wypisac) printf("%lu: %s\n", lineNr, result?"TAK":"NIE");
-        for (int i = 0; i < argc; i++) free(argv[i]);
-    }
+    assert(addRoad(m, "Alinów", "Bór", 1, 2020));
+    assert(addRoad(m, "Bór", "Cielińsk-Niekłańsk", 2, 2020));
+    assert(addRoad(m, "Bór", "Dąb Stary", 3, 2020));
+    assert(addRoad(m, "Cielińsk-Niekłańsk", "Emiliew", 4, 2020));
+    assert(addRoad(m, "Dąb Stary", "Emiliew", 5, 2020));
+    assert(addRoad(m, "Emiliew", "Bór", 8, 2020));
+    assert(addRoad(m, "Emiliew", "Fraźnik Nowy", 3, 2020));
+    assert(!repairRoad(m, "Emiliew", "Cielińsk-Niekłańsk", 2019));
+    assert(repairRoad(m, "Emiliew", "Cielińsk-Niekłańsk", 2021));
+    assert(!repairRoad(m, "Emiliew", "Alinów", 2020));
+    assert(addRoad(m, "Fraźnik Nowy", "Grzegrzewo", 4, 2020));
+    assert(addRoad(m, "Alinów", "Grzegrzewo", 10, 2020));
+    assert(addRoad(m, "Homilcin", "Grzegrzewo", 5, 2020));
+    assert(addRoad(m, "Fraźnik Nowy", "Cielińsk-Niekłańsk", 2, 2020));
+    assert(!addRoad(m, "Fraźnik Nowy", "Cielińsk-Niekłańsk", 2, 2020));
+    assert(!addRoad(m, "Cielińsk-Niekłańsk", "Fraźnik Nowy", 2, 2020));
+    assert(!repairRoad(m, "Emiliew", "Bór", 2018));
+    assert(repairRoad(m, "Emiliew", "Cielińsk-Niekłańsk", 2021));
+    assert(repairRoad(m, "Emiliew", "Fraźnik Nowy", 2023));
+    assert(addRoad(m, "Homilcin", "Cielińsk-Niekłańsk", 3, 2020));
 
-    free(buff);
+    assert(newRoute(m, 10, "Alinów", "Emiliew"));
+
+    str = getRouteDescription(m, 10);
+    assert(strcmp(str, "10;Alinów;1;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew") == 0);
+    free((void *)str);
+
+    assert(extendRoute(m, 10, "Homilcin"));
+
+    str = getRouteDescription(m, 10);
+    assert(strcmp(str, "10;Alinów;1;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
+                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
+    free((void *)str);
+
+
+    assert(addRoad(m, "Dąb Stary", "Alinów", 11, 2022));
+    assert(!removeRoad(m, "Bór", "Cielińsk-Niekłańsk"));
+
+    str = getRouteDescription(m, 10);
+    assert(strcmp(str, "10;Alinów;1;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
+                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
+    free((void *)str);
+
+
+    assert(removeRoad(m, "Alinów", "Bór"));
+    str = getRouteDescription(m, 10);
+    assert(strcmp(str, "10;Alinów;11;2022;Dąb Stary;3;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
+                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
+    free((void *)str);
+
+    assert(!extendRoute(m, 10, "Grzegrzewo"));
+
+    assert(!extendRoute(m, 10, "Alinów"));
+
+    assert(addRoad(m, "Cielińsk-Niekłańsk", "Slima", 5, 2021));
+    assert(!extendRoute(m, 10, "Slima"));
+    assert(removeRoad(m, "Slima", "Cielińsk-Niekłańsk"));
+
+    str = getRouteDescription(m, 10);
+    assert(strcmp(str, "10;Alinów;11;2022;Dąb Stary;3;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
+                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
+    free((void *)str);
+
+    assert(!extendRoute(m, 10, "Homilcin"));
+
+    assert(!removeRoad(m, "Homilcin", "Grzegrzewo"));
+
+    assert(!extendRoute(m, 10, "Slima"));
+
+
+    assert(addRoad(m, "AA" , "AB", 2, 11));
+    assert(addRoad(m, "AA" , "AC", 3, 10));
+    assert(addRoad(m, "AB" , "AD", 2, 12));
+    assert(addRoad(m, "AC" , "AD", 1, 9));
+
+    assert(addRoad(m, "AD" , "AE", 3, 3));
+    assert(addRoad(m, "AD" , "AF", 2, 1));
+    assert(addRoad(m, "AE" , "AG", 1, 4));
+    assert(addRoad(m, "AF" , "AG", 2, 2));
+
+    assert(!newRoute(m, 41, "AA", "AG"));
+
+    assert(repairRoad(m, "AA", "AB", 13));
+    assert(repairRoad(m, "AB", "AD", 14));
+    assert(repairRoad(m, "AD", "AE", 12));
+    assert(repairRoad(m, "AE", "AG", 11));
+
+    assert(newRoute(m, 42, "AA", "AG"));
+
+    assert(addRoad(m, "BA", "BB", 1, 7));
+    assert(addRoad(m, "BB", "BC", 1, 7));
+    assert(addRoad(m, "BD", "BA", 3, 7));
+    assert(addRoad(m, "BD", "BC", 4, 7));
+
+    assert(newRoute(m, 20, "BA", "BC"));
+    assert(extendRoute(m, 20, "BD"));
+
+    str = getRouteDescription(m, 20);
+    assert(strcmp(str, "20;BD;3;7;BA;1;7;BB;1;7;BC") == 0);
+    free((void *)str);
+
+    assert(addRoad(m, "BA", "BE", 5, 7));
+    assert(addRoad(m, "BE", "BB", 5, 7));
+
+    assert(removeRoad(m, "BA", "BB"));
+
+    assert(!removeRoad(m, "BB", "BC"));
+
+    assert(!extendRoute(m, 20, "Homilcin"));
+
+    printf("%s", getRouteDescription(m, 20));
+
+
     deleteMap(m);
+
     return 0;
 }
