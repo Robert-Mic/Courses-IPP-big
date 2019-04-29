@@ -117,7 +117,8 @@ bool addRoad(Map *map, const char *city1, const char *city2,
     if (strcmp(city1, city2) == 0
         || builtYear == 0
         || invalidCityName(city1)
-        || invalidCityName(city2)) {
+        || invalidCityName(city2)
+        || length <= 0) {
         return false;
     }
 
@@ -349,32 +350,32 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
 
     if (result1.second == false) {
         if (result2.second == true) {
-            printf("1\n");
+            //printf("1\n");
             return extRoute(map, routeId, dist, city_num, start);
         }
         else {
             free(dist);
-            printf("2\n");
+            //printf("2\n");
             return false;
         }
     }
     else if (result1.second == result2.second) { //both are true
         if (distance1 < distance2 || (distance1 == distance2 && result1.first > result2.first)) {
-            printf("3\n");
+            //printf("3\n");
             return extRoute(map, routeId, dist, finish, city_num);
         }
         else if (distance1 == distance2 && result1.first == result2.first) {
             free(dist);
-            printf("4\n");
+            //printf("4\n");
             return false;
         }
         else if (distance1 > distance2 || (distance1 == distance2 && result1.first < result2.first)) {
-            printf("5\n");
+            //printf("5\n");
             return extRoute(map, routeId, dist, city_num, start);
         }
     }
     else { //result1.second is true and result2.second is false
-        printf("6\n");
+        //printf("6\n");
         return extRoute(map, routeId, dist, finish, city_num);
     }
     return false;
@@ -409,18 +410,18 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
         return false;
     }
 
+    Edge *edge = findEdgeTo(map->graph->tab[city1_num], city2_num);
+    if (edge == NULL) {
+        return false;
+    }
+
     uint64_t *dist = malloc(sizeof(uint64_t) * map->city_number);
     if (dist == NULL) {
         return false;
     }
 
-    Edge *edge = findEdgeTo(map->graph->tab[city1_num], city2_num);
-
-    if (edge == NULL)
-        return false;
-
     IntList *routes = edge->routes;
-    int length = edge->year;
+    int length = edge->length;
     int year = edge->year;
     edge->routes = NULL;
 
@@ -428,38 +429,51 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
     bool can_be_deleted = true;
 
     removeEdge(map->graph->tab[city1_num], city2_num);
-    removeEdge(map->graph->tab[city2_num], city2_num);
+    removeEdge(map->graph->tab[city2_num], city1_num);
 
     while (iter) {
         int route = iter->val;
         if (dijkstra2(map, route, dist, city1_num, city2_num) == ALLOCATION_FAILURE) {
             can_be_deleted = false;
         }
+        //printf("RM1, %d\n", can_be_deleted);
         if (dist[city2_num] == UINT64_MAX) {
             can_be_deleted = false;
         }
+        //printf("RM2, %d\n", can_be_deleted);
         IntPair res = checkRouteDfs(map, route, dist, city2_num, INT_MAX, city1_num);
         if (res.second == false) {
             can_be_deleted = false;
         }
+        //printf("RM3, %d\n", can_be_deleted);
         iter = nextInt(iter);
     }
-
+    //printf("RM4, %d\n", can_be_deleted);
     if (can_be_deleted == false) {
+        //printf("Recovering edges!\n");
         recoverEdge(map, city1_num, city2_num, routes, length, year); //ignoring value as we return false anyway
+        freeIntList(routes);
+        free(dist);
         return false;
     }
+    //printf("RM5 straight outta while loop\n");
 
     iter = routes->next;
     while (iter) {
         int route = iter->val;
         if (dijkstra2(map, route, dist, city1_num, city2_num) == ALLOCATION_FAILURE) {
+            free(dist);
             return false;
         }
-        markRouteDfs(map, route, dist, city2_num, INT_MAX, -1, city1_num);
+        int result = markRoute(map, route, dist, city1_num, city2_num);
+        if (result == ALLOCATION_FAILURE) {
+            free(dist);
+            return false;
+        }
+        //markRouteDfs(map, route, dist, city2_num, INT_MAX, -1, city1_num);
         iter = nextInt(iter);
     }
-
+    free(dist);
     freeIntList(routes);
     return true;
 }
@@ -486,12 +500,13 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
     char *buff = malloc(sizeof(char) * 12);
     if (buff == NULL) {
         freeCharVector(output);
+        return NULL;
     }
 
     int route = (int)routeId;
     int start = map->routes[route].start;
     int finish = map->routes[route].finish;
-    printf("S & F = %d; %d\n", start, finish);
+    //printf("Start & Finish = %d; %d\n", start, finish);
     int last = -1;
     Vertice *vertice = map->graph->tab[start];
 
@@ -504,6 +519,7 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         return NULL;
 
     while (vertice->number != finish) {
+        //printf("DSC in = %d\n", vertice->number);
         //printf("In vertice %d\n", vertice->number);
         Edge *edge = findEdgeWithRoute(vertice, route, last);
         if (addOrFree(output, ";", buff))
@@ -535,7 +551,7 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         return NULL;
     }
     char *ret = output->tab;
-    printf("%s\n", ret);
+    //printf("%s\n", ret);
     fflush(stdin);
     free(buff);
     free(output);

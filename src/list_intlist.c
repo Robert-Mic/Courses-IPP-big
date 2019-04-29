@@ -63,6 +63,7 @@ IntList* copy(IntList *old) {
             freeIntList(ret);
             return NULL;
         }
-        nextInt(old);
+        old = nextInt(old);
     }
+    return ret;
 }

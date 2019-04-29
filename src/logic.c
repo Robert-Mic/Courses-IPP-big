@@ -12,15 +12,17 @@ bool extRoute(Map *map, int route, uint64_t *dist, int start, int finish) {
         free(dist);
         return false;
     }
-    free(dist);
-    if (markRoute(map, route, dist, start, finish) == ALLOCATION_FAILURE)
+    if (markRoute(map, route, dist, start, finish) == ALLOCATION_FAILURE) {
+        free(dist);
         return false;
+    }
     if (map->routes[route].finish == start) {
         map->routes[route].finish = finish;
     }
     if (map->routes[route].start == finish) {
         map->routes[route].start = start;
     }
+    free(dist);
     return true;
 }
 
@@ -38,15 +40,35 @@ bool recoverEdge(Map *map, int city1_num, int city2_num, IntList *routes, int le
     if (edge1 == NULL)
         return false;
     Edge *edge2 = newEdge(city1_num, length, year);
-    if (edge2 == NULL)
+    if (edge2 == NULL) {
+        freeEdge(edge1);
         return false;
-    edge1->routes = routes;
+    }
+
+    edge1->routes = copy(routes->next);
+    if (edge1->routes == NULL) {
+        freeEdge(edge1);
+        freeEdge(edge2);
+        return false;
+    }
+
     edge2->routes = copy(routes->next);
-    if (edge2->routes == NULL)
+    if (edge2->routes == NULL) {
+        freeEdge(edge1);
+        freeEdge(edge2);
         return false;
-    if (edgeVectorPush(map->graph->tab[city1_num]->edges, edge1) == ALLOCATION_FAILURE)
+    }
+
+    if (edgeVectorPush(map->graph->tab[city1_num]->edges, edge1) == ALLOCATION_FAILURE) {
+        freeEdge(edge1);
+        freeEdge(edge2);
         return false;
-    if (edgeVectorPush(map->graph->tab[city2_num]->edges, edge1) == ALLOCATION_FAILURE)
+    }
+    if (edgeVectorPush(map->graph->tab[city2_num]->edges, edge2) == ALLOCATION_FAILURE) {
+        edgeVectorPop(map->graph->tab[city1_num]->edges);
+        freeEdge(edge1);
+        freeEdge(edge2);
         return false;
-    return ALLOCATION_SUCCESS;
+    }
+    return true;
 }

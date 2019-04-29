@@ -104,14 +104,21 @@ int main() {
     free((void *)str);
 
 
-    //assert(addRoad(m, "Dąb Stary", "Alinów", 11, 2022));
-    removeRoad(m, "Alinów", "Bór");
-    /*
+    assert(addRoad(m, "Dąb Stary", "Alinów", 11, 2022));
+    assert(!removeRoad(m, "Bór", "Cielińsk-Niekłańsk"));
+
     str = getRouteDescription(m, 10);
-    int xd = strcmp(str, "10;Alinów;11;2022;Dąb Stary;2020;3;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
-                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0;
+    assert(strcmp(str, "10;Alinów;1;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
+                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
     free((void *)str);
-    */
+
+
+    assert(removeRoad(m, "Alinów", "Bór"));
+    str = getRouteDescription(m, 10);
+    assert(strcmp(str, "10;Alinów;11;2022;Dąb Stary;3;2020;Bór;2;2020;Cielińsk-Niekłańsk;4;2021;Emiliew"
+                       ";3;2023;Fraźnik Nowy;4;2020;Grzegrzewo;5;2020;Homilcin") == 0);
+    free((void *)str);
+
 
      deleteMap(m);
 
