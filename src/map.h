@@ -1,7 +1,9 @@
 /** @file
  * The interface of the class that stores a map of routes.
  *
- * @author Łukasz Kamiński <kamis@mimuw.edu.pl>, Marcin Peczarski <marpe@mimuw.edu.pl>, Robert Michna <rm406247@students.mimuw.edu.pl>
+ * @author Łukasz Kamiński <kamis@mimuw.edu.pl>,
+ * Marcin Peczarski <marpe@mimuw.edu.pl>,
+ * Robert Michna <rm406247@students.mimuw.edu.pl>
  * @copyright Uniwersytet Warszawski
  * @date 20.03.2019
  */
@@ -26,33 +28,40 @@ struct Map {
     int city_number;
     VerticeVector *graph;
     RouteDesc *routes;
+    int komenda;
 };
 
 /** @brief Creates a new map.
- * Creates new, empty structure, that does not hold any city, roads, nor routes.
- * @return A pointer to the created structure or NULL, if memory allocation failed.
+ * Creates new, empty structure, that does not hold any city, roads, nor
+ * routes.
+ * @return A pointer to the created structure or NULL, if memory
+ * allocation failed.
  */
 Map* newMap(void);
 
 /** @brief Deletes map structure.
  * Deletes the structure pointed to by @p map.
  * Does nothing if the pointer is NULL.
- * @param[in] map        – A pointer to the structure that this function deletes.
+ * @param[in] map        – A pointer to the structure that this function
+ * deletes.
  */
 void deleteMap(Map *map);
 
 /** @brief Adds a road to the map that goes between @p city1 and @p city2.
  * If one of the cities does not exist it creates it and adds the edge
  * between them.
- * @param[in,out] map    – A pointer to the structure that stores the map of the roads;
- * @param[in] city1      – A pointer to an array of characters that holds the name of city1;
- * @param[in] city2      – A pointer to an array of characters that holds the name of city2;
+ * @param[in,out] map    – A pointer to the structure that stores the
+ * map of the roads;
+ * @param[in] city1      – A pointer to an array of characters that
+ * holds the name of city1;
+ * @param[in] city2      – A pointer to an array of characters that
+ * holds the name of city2;
  * @param[in] length     – The length of the road in kilometers;
  * @param[in] builtYear  – The initial year the road was created at.
  * @return Returns @p true if the road was successfully added.
- * Returns @p false if one of the following occured: one of the parameters has illegal value,
- * the city names are identical, the road between the cities already exists,
- * the function failed to allocate memory.
+ * Returns @p false if one of the following occured: one of the
+ * parameters has illegal value, the city names are identical, the road 
+ * between the cities already exists, the function failed to allocate memory.
  */
 bool addRoad(Map *map, const char *city1, const char *city2,
              unsigned length, int builtYear);

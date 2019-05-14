@@ -116,6 +116,7 @@ bool invalidCityName(const char *city) {
 bool addRoad(Map *map, const char *city1, const char *city2,
              unsigned length, int builtYear) {
 
+    map->komenda++;
     if (strcmp(city1, city2) == 0
         || builtYear == 0
         || invalidCityName(city1)
@@ -207,6 +208,7 @@ bool addRoad(Map *map, const char *city1, const char *city2,
  * drogi rok budowy lub ostatniego remontu.
  */
 bool repairRoad(Map *map, const char *city1, const char *city2, int repairYear) {
+    map->komenda++;
     if (strcmp(city1, city2) == 0
         || repairYear == 0
         || invalidCityName(city1)
@@ -252,6 +254,7 @@ bool repairRoad(Map *map, const char *city1, const char *city2, int repairYear) 
  */
 bool newRoute(Map *map, unsigned routeId,
               const char *city1, const char *city2) {
+    map->komenda++;
     if (routeId <= 0
         || routeId >= MAX_ROUTES
         || invalidCityName(city1)
@@ -312,6 +315,7 @@ bool newRoute(Map *map, unsigned routeId,
  * pamięci.
  */
 bool extendRoute(Map *map, unsigned routeId, const char *city) {
+    map->komenda++;
     if (routeId <= 0
         || routeId >= MAX_ROUTES
         || invalidCityName(city)
@@ -413,6 +417,7 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
  * pamięci.
  */
 bool removeRoad(Map *map, const char *city1, const char *city2) {
+    map->komenda++;
     if (invalidCityName(city1)
         || invalidCityName(city2))
         return false;
@@ -508,6 +513,7 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
  * @return Wskaźnik na napis lub NULL, gdy nie udało się zaalokować pamięci.
  */
 char const* getRouteDescription(Map *map, unsigned routeId) {
+    map->komenda++;
     if (routeId <= 0
         || routeId >= MAX_ROUTES
         || map->routes[routeId].start == -1)
