@@ -5,11 +5,14 @@
 #include <stdint.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "Graph.h"
 #include "map.h"
 #include "constants.h"
 #include "utils.h"
 #include "list_vertice_distancelist.h"
+
+#define BAD_ROAD 2
 
 int dixtra(Map *map, uint64_t *dist, int start, int finish) {
     DistList *queue = newDistList(NULL, 0);
@@ -138,10 +141,10 @@ IntPair checkRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest
 }
 
 int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int from, int finish) {
-    //printf("In %d, %s\n", where, map->int_to_name->tab[where]);
+    //if (route == 300)printf("In %d, %s\n", where, map->int_to_name->tab[where]);
     if (from >= 0) {
         Edge *edge = findEdgeTo(map->graph->tab[where], from);
-        //printf("Marked edge to %d, %s\n", edge->where, map->int_to_name->tab[edge->where]);
+        //if (route == 300)printf("Marked edge to %d, %s\n", edge->where, map->int_to_name->tab[edge->where]);
         if (addIntAfter(edge->routes, route) == ALLOCATION_FAILURE)
             return ALLOCATION_FAILURE;
     }
@@ -149,15 +152,13 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
     if (finish == where) {
         return ALLOCATION_SUCCESS;
     }
-
     for (int i = 0; i < map->graph->tab[where]->edges->current_size; i++) {
         Edge *edge = map->graph->tab[where]->edges->tab[i];
 
         if (dist[edge->where] == dist[where] - edge->length
             && (dist[edge->where] != 0) != (edge->where == finish)
             && edge->year >= oldest) {
-
-            //printf("Marked edge to %d, %s\n", edge->where, map->int_to_name->tab[edge->where]);
+            //if (route == 300)printf("Marked edge to %d, %s\n", edge->where, map->int_to_name->tab[edge->where]);
             if (addIntAfter(edge->routes, route) == ALLOCATION_FAILURE) {
                 if (from >= 0) {
                     Edge *edge2 = findEdgeTo(map->graph->tab[where], from);
@@ -174,15 +175,25 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
                 }
                 return ALLOCATION_FAILURE;
             }
-            return ALLOCATION_SUCCESS;
+            if (result == BAD_ROAD) {
+                //printf("In %d Removed edge to %d, %s\n", where, edge->where, map->int_to_name->tab[edge->where]);
+                removeNextInt(edge->routes);
+            }
+            if (result == ALLOCATION_SUCCESS)
+                return ALLOCATION_SUCCESS;
         }
     }
-    return ALLOCATION_SUCCESS;
+    assert(from > 0); //should always be
+    Edge *edge2 = findEdgeTo(map->graph->tab[where], from);
+    removeNextInt(edge2->routes);
+    //printf("In %d removed edge to %d\n", where, edge2->where);
+    return BAD_ROAD;
 }
 
 int markRoute(Map *map, int route, uint64_t *dist, int start, int finish) {
     IntPair result = checkRouteDfs(map, route, dist, finish, INT_MAX, start);
     if (result.second == true) {
+        //if (route==300)printf("res.first = %d\n\n\n\n\n", result.first);
         int res = markRouteDfs(map, route, dist, finish, result.first, -1, start);
         if (res == ALLOCATION_FAILURE)
             return ALLOCATION_FAILURE;
