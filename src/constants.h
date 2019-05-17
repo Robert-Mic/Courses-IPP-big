@@ -22,5 +22,7 @@
 #define ALLOCATION_FAILURE 1
 /// Constant returned by functions that failed to allocate memory.
 #define ALLOCATION_SUCCESS 0
+/// Constant signalizing to stop the program completly
+#define MEMORY_ERROR 2
 
 #endif //DROGI_CONSTANTS_H

@@ -42,7 +42,7 @@ Map* newMap(void);
 /** @brief Deletes map structure.
  * Deletes the structure pointed to by @p map.
  * Does nothing if the pointer is NULL.
- * @param[in] map        – A pointer to the structure that this function
+ * @param[in] map – A pointer to the structure that this function
  * deletes.
  */
 void deleteMap(Map *map);

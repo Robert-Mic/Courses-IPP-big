@@ -126,7 +126,7 @@ int find(CityHashMap *hashmap, const char *key) {
         }
         iter = nextCity(iter);
     }
-    return -1;
+    return NOT_FOUND;
 }
 
 void freeHashmap(CityHashMap *hashmap) {

@@ -46,6 +46,8 @@ int charVectorPushString(CharVector *vector, char *value) {
 }
 
 void freeCharVector(CharVector *vector) {
+    if (vector == NULL)
+        return;
     free(vector->tab);
     free(vector);
 }
@@ -55,3 +57,4 @@ void charVectorPop(CharVector *vector) {
         vector->current_size -= 1;
     }
 }
+

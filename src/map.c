@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 /**
  * Struktura przechowująca mapę dróg krajowych.
@@ -30,6 +31,7 @@ Map* newMap(void) {
     if (!map)
         return NULL;
 
+    map->komenda = 0;
     map->city_number = 0;
 
     map->name_to_int = newHashMap(100);
@@ -89,17 +91,6 @@ void deleteMap(Map *map) {
     free(map);
 }
 
-bool invalidCityName(const char *city) {
-    int i = 0;
-    while (city[i]) {
-        unsigned char c = (unsigned char)city[i];
-        if (c < 32 || c == ';')
-            return true;
-        i++;
-    }
-    return i == 0;
-}
-
 /** @brief Dodaje do mapy odcinek drogi między dwoma różnymi miastami.
  * Jeśli któreś z podanych miast nie istnieje, to dodaje go do mapy, a następnie
  * dodaje do mapy odcinek drogi między tymi miastami.
@@ -128,7 +119,7 @@ bool addRoad(Map *map, const char *city1, const char *city2,
     int city1_num = find(map->name_to_int, city1);
     int city2_num = find(map->name_to_int, city2);
 
-    if (city1_num == -1) {
+    if (city1_num == NOT_FOUND) {
         if (put(map->name_to_int, city1, map->city_number) == ALLOCATION_FAILURE) {
             return false;
         }
@@ -153,7 +144,7 @@ bool addRoad(Map *map, const char *city1, const char *city2,
         map->city_number++;
     }
 
-    if (city2_num == -1) {
+    if (city2_num == NOT_FOUND) {
         if (put(map->name_to_int, city2, map->city_number) == ALLOCATION_FAILURE) {
             return false;
         }
@@ -209,6 +200,20 @@ bool addRoad(Map *map, const char *city1, const char *city2,
  */
 bool repairRoad(Map *map, const char *city1, const char *city2, int repairYear) {
     map->komenda++;
+    /*if (map->komenda >= 279) {
+        for (int i = 0; i < map->graph->current_size; i++) {
+            printf(">>>Vective %d\n", i);
+            for (int j = 0; j < map->graph->tab[i]->edges->current_size; j++) {
+                printf(">>Edge %d to %d\n>Routes\n", j, map->graph->tab[i]->edges->tab[j]->where);
+                IntList *iter = map->graph->tab[i]->edges->tab[j]->routes->next;
+                while (iter) {
+                    printf("%d ", iter->val);
+                    iter = nextInt(iter);
+                }
+                printf("\n");
+            }
+        }
+    }*/
     if (strcmp(city1, city2) == 0
         || repairYear == 0
         || invalidCityName(city1)
@@ -219,7 +224,7 @@ bool repairRoad(Map *map, const char *city1, const char *city2, int repairYear) 
     int city1_num = find(map->name_to_int, city1);
     int city2_num = find(map->name_to_int, city2);
 
-    if (city1_num == -1 || city2_num == -1) {
+    if (city1_num == NOT_FOUND || city2_num == NOT_FOUND) {
         return false;
     }
 
@@ -266,8 +271,12 @@ bool newRoute(Map *map, unsigned routeId,
     int city1_num = find(map->name_to_int, city1);
     int city2_num = find(map->name_to_int, city2);
 
-    if (city1_num == -1 || city2_num == -1) {
+    if (city1_num == NOT_FOUND || city2_num == NOT_FOUND) {
         return false;
+    }
+    //debug
+    if (routeId == 300) {
+        printf("newRoute %d city%d city%d\n", routeId, city1_num, city2_num);
     }
 
     uint64_t *dist = malloc(sizeof(uint64_t) * map->city_number);
@@ -292,6 +301,48 @@ bool newRoute(Map *map, unsigned routeId,
         free(dist);
         return false;
     }
+    /*
+    if (routeId == 300) {
+        for (int i = 0; i < map->graph->current_size; i++) {
+            printf(">>>Vertice %2d, dist = %6d\n", i, dist[i]);
+            for (int j = 0; j < map->graph->tab[i]->edges->current_size; j++) {
+                printf(">>Edge%2d from %2d to %2d\n>Routes\n", j, i, map->graph->tab[i]->edges->tab[j]->where);
+                IntList *iter = map->graph->tab[i]->edges->tab[j]->routes->next;
+                while (iter) {
+                    printf("%3d ", iter->val);
+                    iter = nextInt(iter);
+                }
+                printf("\n");
+            }
+        }
+    }
+    if (routeId == 300) {
+        int edge_num = 0;
+        printf("\n\n");
+        printf("<?xml version=\"1.0\" encoding=\"UTF-8\"?><graphml><graph id=\"Graph\" uidGraph=\"BLANK\" uidEdge=\"BLANK2\"><nodes>\n");
+        for (int i = 0; i < map->graph->current_size; i++) {
+            printf("<node positionX=\"330\" positionY=\"89\" id=\"%d\" mainText=\"%d %" PRId64 "\" upText=\"\" ></node>", i, i, dist[i]);
+        }
+        printf("</nodes><edges>\n");
+        for (int i = 0; i < map->graph->current_size; i++) {
+            for (int j = 0; j < map->graph->tab[i]->edges->current_size; j++) {
+                IntList *iter = map->graph->tab[i]->edges->tab[j]->routes->next;
+                char *text = "";
+                while (iter) {
+                    if (iter->val == 300)
+                        text = "300";
+                    iter = nextInt(iter);
+                }
+                //v1 v2 weight "text"
+                printf(
+                        "<edge vertex1=\"%d\" vertex2=\"%d\" isDirect=\"true\" weight=\"%d\" useWeight=\"true\" hasPair=\"false\" id=\"%d\" text=\"%d %d %s\" arrayStyleStart=\"\" arrayStyleFinish=\"\" model_width=\"4\" model_type=\"0\" model_curvedValue=\"0.1\" ></edge>",
+                        i, map->graph->tab[i]->edges->tab[j]->where, map->graph->tab[i]->edges->tab[j]->length, 10001 + edge_num++, map->graph->tab[i]->edges->tab[j]->length, map->graph->tab[i]->edges->tab[j]->year, text
+                );
+            }
+        }
+        printf("</edges></graph></graphml>\n%d %d\n", map->graph->current_size, edge_num);
+        printf("\n\n");
+    }*/
 
     free(dist);
     return true;
@@ -316,6 +367,37 @@ bool newRoute(Map *map, unsigned routeId,
  */
 bool extendRoute(Map *map, unsigned routeId, const char *city) {
     map->komenda++;
+
+    if (map->komenda == 716) {
+        int edge_num = 0;
+        printf("\n\n");
+        printf("<?xml version=\"1.0\" encoding=\"UTF-8\"?><graphml><graph id=\"Graph\" uidGraph=\"BLANK\" uidEdge=\"BLANK2\"><nodes>\n");
+        for (int i = 0; i < map->graph->current_size; i++) {
+            int x = 100 - rand()%200;
+            int y = 100 - rand()%200;
+            printf("<node positionX=\"%d\" positionY=\"%d\" id=\"%d\" mainText=\"%d %" PRId64 "\" upText=\"\" ></node>", 330+x, 89 + y, i, i, 5ll); //dist[i]
+        }
+        printf("</nodes><edges>\n");
+        for (int i = 0; i < map->graph->current_size; i++) {
+            for (int j = 0; j < map->graph->tab[i]->edges->current_size; j++) {
+                IntList *iter = map->graph->tab[i]->edges->tab[j]->routes->next;
+                char *text = "";
+                while (iter) {
+                    if (iter->val == 300)
+                        text = "300";
+                    iter = nextInt(iter);
+                }
+                //v1 v2 weight "text"
+                printf(
+                        "<edge vertex1=\"%d\" vertex2=\"%d\" isDirect=\"true\" weight=\"%d\" useWeight=\"true\" hasPair=\"false\" id=\"%d\" text=\"%d %d %s\" arrayStyleStart=\"\" arrayStyleFinish=\"\" model_width=\"4\" model_type=\"0\" model_curvedValue=\"0.1\" ></edge>",
+                        i, map->graph->tab[i]->edges->tab[j]->where, map->graph->tab[i]->edges->tab[j]->length, 10001 + edge_num++, map->graph->tab[i]->edges->tab[j]->length, map->graph->tab[i]->edges->tab[j]->year, text
+                );
+            }
+        }
+        printf("</edges></graph></graphml>\n%d %d\n", map->graph->current_size, edge_num);
+        printf("\n\n");
+    }
+
     if (routeId <= 0
         || routeId >= MAX_ROUTES
         || invalidCityName(city)
@@ -323,9 +405,13 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
         return false;
 
     int city_num = find(map->name_to_int, city);
-    if (city_num == -1) {
+    if (city_num == NOT_FOUND) {
         return false;
     }
+    //debug
+    //if (routeId == 300)fprintf(stderr, "Debug %d: extendRoute %d city%d\n", map->komenda, routeId, city_num);
+    printf("%d : %d, %d\n", map->routes[routeId].start, map->routes[routeId].finish, city_num);
+
     if (isOnRoute(map, routeId, city_num)) {
         return false;
     }
@@ -425,7 +511,7 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
     int city1_num = find(map->name_to_int, city1);
     int city2_num = find(map->name_to_int, city2);
 
-    if (city1_num == -1 || city2_num == -1) {
+    if (city1_num == NOT_FOUND || city2_num == NOT_FOUND) {
         return false;
     }
 
@@ -438,6 +524,15 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
     if (dist == NULL) {
         return false;
     }
+    //debug
+    /*
+    IntList *iter2 = edge->routes;
+    while (iter2) {
+        if (iter2->val) {
+            fprintf(stderr, "Debug removeRoad city%d city%d, route %d\n", city1_num, city2_num, iter2->val);
+        }
+        iter2 = nextInt(iter2);
+    }*/
 
     IntList *routes = edge->routes;
     int length = edge->length;
@@ -547,6 +642,8 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         //printf("DSC in = %d\n", vertice->number);
         //printf("In vertice %d\n", vertice->number);
         Edge *edge = findEdgeWithRoute(vertice, route, last);
+        if (edge == NULL)
+            printf("VERY BIG ERROR!\n");
         if (addOrFree(output, ";", buff))
             return NULL;
 
@@ -577,7 +674,6 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
     }
     char *ret = output->tab;
     //printf("%s\n", ret);
-    fflush(stdin);
     free(buff);
     free(output);
     return ret;

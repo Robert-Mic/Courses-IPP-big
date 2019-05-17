@@ -7,6 +7,7 @@
 
 #define MOD 1770134209
 #define TRESHHOLD 0.75
+#define NOT_FOUND -1
 
 /**
  * A hashmap that converts city names to their corresponding numbers.

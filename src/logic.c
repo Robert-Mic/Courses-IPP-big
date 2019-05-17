@@ -7,6 +7,18 @@
 #include "constants.h"
 #include "vector_charvector.h"
 
+/// checks if city name is valid
+bool invalidCityName(const char *city) {
+    int i = 0;
+    while (city[i]) {
+        unsigned char c = (unsigned char)city[i];
+        if (c < 32 || c == ';')
+            return true;
+        i++;
+    }
+    return i == 0;
+}
+
 bool extRoute(Map *map, int route, uint64_t *dist, int start, int finish) {
     if (dijkstra(map, route, dist, start, finish) == ALLOCATION_FAILURE) {
         free(dist);
@@ -74,4 +86,47 @@ bool recoverEdge(Map *map, int city1_num, int city2_num, IntList *routes, int le
         return false;
     }
     return true;
+}
+
+void clearRouteByList(Map *map, int route, IntList *list) {
+    IntList *it = list->next;
+    while (it->next) {
+        Edge *edge1 = findEdgeTo(map->graph->tab[it->val], it->next->val);
+        Edge *edge2 = findEdgeTo(map->graph->tab[it->next->val], it->val);
+        if (edge1) {
+            IntList *it2 = edge1->routes;
+            while (it2->next) {
+                if (it2->next->val == route)
+                    removeNextInt(it2);
+                it2 = it2->next;
+            }
+        }
+        if (edge2) {
+            IntList *it2 = edge2->routes;
+            while (it2->next) {
+                if (it2->next->val == route)
+                    removeNextInt(it2);
+                it2 = it2->next;
+            }
+        }
+        it = it->next;
+    }
+}
+
+int markRouteByList(Map *map, int route, IntList *list) {
+    IntList *it = list->next;
+    while (it->next) {
+        Edge *edge1 = findEdgeTo(map->graph->tab[it->val], it->next->val);
+        Edge *edge2 = findEdgeTo(map->graph->tab[it->next->val], it->val);
+        if (edge1 == NULL || addIntAfter(edge1->routes, route) == ALLOCATION_FAILURE) {
+            clearRouteByList(map, route, list);
+            return ALLOCATION_FAILURE;
+        }
+        if (edge2 == NULL || addIntAfter(edge2->routes, route) == ALLOCATION_FAILURE) {
+            clearRouteByList(map, route, list);
+            return ALLOCATION_FAILURE;
+        }
+        it = it->next;
+    }
+    return ALLOCATION_SUCCESS;
 }

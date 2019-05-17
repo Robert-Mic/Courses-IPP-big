@@ -12,7 +12,7 @@
 #include "utils.h"
 #include "list_vertice_distancelist.h"
 
-#define BAD_ROAD 2
+#define BAD_ROAD -1
 
 int dixtra(Map *map, uint64_t *dist, int start, int finish) {
     DistList *queue = newDistList(NULL, 0);
@@ -183,7 +183,7 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
                 return ALLOCATION_SUCCESS;
         }
     }
-    assert(from > 0); //should always be
+    assert(from >= 0); //should always be
     Edge *edge2 = findEdgeTo(map->graph->tab[where], from);
     removeNextInt(edge2->routes);
     //printf("In %d removed edge to %d\n", where, edge2->where);

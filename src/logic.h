@@ -9,10 +9,14 @@
 #include "Graph.h"
 #include "vector_charvector.h"
 
+bool invalidCityName(const char *city);
+
 bool extRoute(Map *map, int route, uint64_t *dist, int start, int finish);
 
 int addOrFree(CharVector *vector, char *val, char *free_buff);
 
 bool recoverEdge(Map *map, int city1_num, int city2_num, IntList *routes, int length, int year);
+
+int markRouteByList(Map *map, int route, IntList *list);
 
 #endif //DROGI_LOGIC_H

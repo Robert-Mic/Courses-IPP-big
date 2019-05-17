@@ -19,4 +19,10 @@ int min(int a, int b);
 
 char* myStrdup(const char *str);
 
+char* strdupRange(const char *str, int start, int end);
+
+char** split(const char *string, const char split_char);
+
+void freeSplit(char **split);
+
 #endif //DROGI_UTILS_H
