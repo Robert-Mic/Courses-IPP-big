@@ -52,7 +52,11 @@ set(SOURCE_FILES
         src/list_vertice_distancelist.c
         src/list_vertice_distancelist.h
         src/logic.c
-        src/logic.h)
+        src/logic.h
+        src/input.c
+        src/input.h
+        src/input_parse.c
+        src/input_parse.h)
 
 # Wskazujemy plik wykonywalny.
 add_executable(map ${SOURCE_FILES})
