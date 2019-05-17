@@ -81,6 +81,7 @@ DistList* findBeforeMin(DistList *it) {
             min = iter;
             ret = prev;
         }
+        prev = iter;
         iter = nextDist(iter);
     }
     return ret;

@@ -15,7 +15,7 @@
 #define FILE_END 3
 
 /** @brief Reads a line from standard input.
- * @param vector - character vector that buffers the input.
+ * @param[in] vector - character vector that buffers the input.
  * vector.tab holds correct string representation of the line
  * including potential newline character and null (0) at the end.
  * @return ALLOCATION_SUCCESS on successful read,

@@ -20,11 +20,12 @@
  */
 void error(uint64_t nr);
 
-/** @brief Parses the input converted by split() function. @see split()
+/** @brief Parses the input converted by @ref split function.
  * Parses the input passed in the array of strings. The last element
  * of @p args must point to NULL.
- * @param map - A pointer to map structure to which the changes will be applied.
- * @param args - An array of strings containing function arguments.
+ * @param[in,out] map - A pointer to map structure to which the changes will be
+ * applied.
+ * @param[in] args - An array of strings containing function arguments.
  * @return If the parsed command is valid ir returns COMMAND_SUCCEEDED constant.
  * If the command is invalid COMMAND_FAILED is returned. In some cases if memory
  * allocation fails MEMORY_ERROR constant is returned.
