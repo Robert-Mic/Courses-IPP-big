@@ -85,17 +85,13 @@ int resize(CityHashMap *hashmap) {
 
 int put(CityHashMap *hashmap, const char *key, int number) {
     int hash = getHash(key, hashmap->size);
-    ///////////////////////////////////////printf("key = %s, hash = %d\n", key, hash);
-    // list iterator
     CityList *iter = hashmap->city_list[hash]->next;
     int increase_load = (iter == NULL);
 
     int key_exists = false;
 
     while (iter) {
-        //////////////////////////printf("key1 = %s , key2 = %s\n", iter->name, key);
         if (strcmp(iter->name, key) == 0) {
-            //////////////////////printf("ok\n");
             iter->number = number;
             key_exists = true;
         }
@@ -117,10 +113,8 @@ int put(CityHashMap *hashmap, const char *key, int number) {
 
 int find(CityHashMap *hashmap, const char *key) {
     int hash = getHash(key, hashmap->size);
-    ///////////////////////printf("key = %s, hash = %d\n", key, hash);
     CityList *iter = hashmap->city_list[hash]->next;
     while (iter) {
-        ///////////////////printf("Look at iter = %s, %d\n", iter->name, iter->number);
         if (strcmp(iter->name, key) == 0) {
             return iter->number;
         }

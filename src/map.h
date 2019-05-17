@@ -28,7 +28,6 @@ struct Map {
     int city_number;
     VerticeVector *graph;
     RouteDesc *routes;
-    int komenda;
 };
 
 /** @brief Creates a new map.
