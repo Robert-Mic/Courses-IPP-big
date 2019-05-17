@@ -1,5 +1,5 @@
 /** @file
- * Edge class interface
+ * Edge class interface.
  *
  * @author Robert Michna <rm406247@students.mimuw.edu.pl>
  * @copyright Uniwersytet Warszawski
@@ -12,9 +12,10 @@
 #include "list_intlist.h"
 
 /**
- * @var where - The number in graph this edge leads to.
- * @var length - The length of the edge.
- * @var year - The year of last renovation of this edge.
+ * where - The number in graph this edge leads to.
+ * length - The length of the edge.
+ * year - The year of last renovation of this edge.
+ * routes - List of numbers of routes passing through this edge.
  */
 struct RoadEdge {
     int where;

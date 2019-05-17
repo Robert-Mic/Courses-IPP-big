@@ -1,7 +1,10 @@
-//
-// Created by rober on 16.05.2019.
-//
-
+/** @file
+ * Input parsing functions interface.
+ *
+ * @author Robert Michna <rm406247@students.mimuw.edu.pl>
+ * @copyright Uniwersytet Warszawski
+ * @date 10.04.2019
+ */
 #ifndef DROGI_INPUT_PARSE_H
 #define DROGI_INPUT_PARSE_H
 
@@ -12,8 +15,20 @@
 #define COMMAND_FAILED 11
 #define COMMAND_SUCCEEDED 12
 
+/** @brief Prints "ERROR @p num" to stderr.
+ * @param nr - number of line where the error occurred.
+ */
 void error(uint64_t nr);
 
+/** @brief Parses the input converted by split() function. @see split()
+ * Parses the input passed in the array of strings. The last element
+ * of @p args must point to NULL.
+ * @param map - A pointer to map structure to which the changes will be applied.
+ * @param args - An array of strings containing function arguments.
+ * @return If the parsed command is valid ir returns COMMAND_SUCCEEDED constant.
+ * If the command is invalid COMMAND_FAILED is returned. In some cases if memory
+ * allocation fails MEMORY_ERROR constant is returned.
+ */
 int parseInput(Map *map, char **args);
 
 #endif //DROGI_INPUT_PARSE_H

@@ -1,6 +1,10 @@
-//
-// Created by rober on 24.04.2019.
-//
+/** @file
+ * Hashmap class interface.
+ *
+ * @author Robert Michna <rm406247@students.mimuw.edu.pl>
+ * @copyright Uniwersytet Warszawski
+ * @date 25.03.2019
+ */
 
 #ifndef DROGI_HASHMAP_H
 #define DROGI_HASHMAP_H
@@ -10,7 +14,7 @@
 #define NOT_FOUND -1
 
 /**
- * A hashmap that converts city names to their corresponding numbers.
+ * A hashmap that converts city name strings to their corresponding numbers.
  */
 typedef struct CityToNumberHashMap CityHashMap;
 
