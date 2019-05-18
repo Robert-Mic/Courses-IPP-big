@@ -23,7 +23,7 @@
 typedef struct Map Map;
 
 struct Map {
-    CityHashMap *name_to_int; /**< Hashmap that converts city names to indexes */
+    CityHashMap *name_to_int; /**< Hashmap that converts city names to indexes.*/
     StringVector *int_to_name;  /**< Remembers the name of the city by given id.*/
     int city_number;  /**< The current number of cities */
     VerticeVector *graph;  /**< Structure to hold the graph of roads */
