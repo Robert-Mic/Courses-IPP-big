@@ -9,13 +9,15 @@
 #ifndef DROGI_UTILS_H
 #define DROGI_UTILS_H
 
+/// Structure that holds a pair of integers.
 typedef struct  IntegerPair IntPair;
 
 /**
  * Structure that holds a pair of integers.
  */
 struct IntegerPair {
-    int first, second; /**< First and second value of the pair.*/
+    int first; /**< First value of the pair.*/
+    int second; /**< Second value of the pair.*/
 };
 
 /** @brief Compares two Pairs.
@@ -53,8 +55,8 @@ int min(int a, int b);
 char* myStrdup(const char *str);
 
 /** @brief Duplicates the characters in a specified range.
- * Duplicates the characters in a specified range. Allocates necessary memory and
- * ends string with 0. Has to be freed by @p free.
+ * Duplicates the characters in a specified range. Allocates necessary memory
+ * and ends string with 0. Has to be freed by @p free.
  * @param[in] str - A string from which we duplicate with length of at least @p end.
  * @param[in] start - The starting position from which we copy. Inclusive.
  * @param[in] end - The ending position to which we copy. Exclusive.
@@ -64,8 +66,8 @@ char* myStrdup(const char *str);
  */
 char* strdupRange(const char *str, int start, int end);
 
-/** @brief Splits the string on @param split_char. Returns an array of strings.
- * Splits the string on @param split_char. The returned array ends with a pointer
+/** @brief Splits the string on @param split_char . Returns an array of strings.
+ * Splits the string on @param split_char . The returned array ends with a pointer
  * to NULL. All strings end with 0. Has to be freed by @ref freeSplit.
  * @param[in] string - The string we want to split.
  * @param[in] split_char - The character on which we split. (ex. ';')

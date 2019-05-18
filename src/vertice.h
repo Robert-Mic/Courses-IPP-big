@@ -12,6 +12,7 @@
 
 #include "vector_edgesvector.h"
 
+/// A structure representing a graph's vertice.
 typedef struct Vertice Vertice;
 
 /**
@@ -23,7 +24,7 @@ struct Vertice {
 };
 
 /** @brief Creates new Vertice.
- * Creates new Vertice. Allocated memeory has to be freed by @ref freeVertice.
+ * Creates new Vertice. Allocated memory has to be freed by @ref freeVertice.
  * @param[in] number - The number of the vertice.
  * @return Returns a newly created Vertice or NULL if th function fails to
  * allocate memory.
@@ -35,8 +36,8 @@ Vertice *newVertice(int number);
  */
 void freeVertice(Vertice *vertice);
 
-/** @brief Finds an edge going from @p vertice to city with number @param city.
- * Finds an edge going from @p vertice to city of number @param city. Returns
+/** @brief Finds an edge going from @p vertice to city with number @param city .
+ * Finds an edge going from @p vertice to city of number @param city . Returns
  * NULL if there is no such edge.
  * @param[in] vertice - A pointer to the vertices from which we search.
  * @param[in] city - The index of the city to which we search for the edge.

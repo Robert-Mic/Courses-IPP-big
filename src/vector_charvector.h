@@ -8,7 +8,7 @@
 
 #ifndef DROGI_VECTOR_CHARVECTOR_H
 #define DROGI_VECTOR_CHARVECTOR_H
-
+/// A vector of characters. Dynamically allocates memory.
 typedef struct CharVector CharVector;
 
 /**

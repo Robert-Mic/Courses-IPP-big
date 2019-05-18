@@ -11,6 +11,7 @@
 
 #include "vertice.h"
 
+/// A vector of Vertices. Dynamically allocates memory.
 typedef struct VerticeVector VerticeVector;
 
 /**

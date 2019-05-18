@@ -9,8 +9,13 @@
 #ifndef DROGI_ROUTEDESCRIPTION_H
 #define DROGI_ROUTEDESCRIPTION_H
 
+/**
+ * A constant limiting the possible route's IDs. Route ID must be greater
+ * than 0 and lower @p than MAX_ROUTES.
+ */
 #define MAX_ROUTES 1000
 
+/// Structure describing a route.
 typedef struct RouteDescription RouteDesc;
 
 /**

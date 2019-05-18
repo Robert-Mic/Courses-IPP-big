@@ -10,7 +10,7 @@
 #define DROGI_EDGESVECTOR_H
 
 #include "edge.h"
-
+/// A vector of Edges. Dynamically allocates memory.
 typedef struct RoadEdgeVector EdgeVector;
 
 /**

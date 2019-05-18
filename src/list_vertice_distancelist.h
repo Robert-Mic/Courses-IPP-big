@@ -19,9 +19,9 @@ typedef struct VerticeDistanceList DistList;
  * A list of vertices' distances.
  */
 struct VerticeDistanceList {
-    uint64_t dist;  /**< the calculated distance of the vertice.*/
-    Vertice *vertice; /** a pointer to the vertice.*/
-    DistList *next;  /** a pointer to the next element of the list or NULL.*/
+    uint64_t dist;  /**< The calculated distance of the vertice.*/
+    Vertice *vertice; /**< A pointer to the vertice.*/
+    DistList *next;  /**< A pointer to the next element of the list or NULL.*/
 };
 
 /** @brief Creates new DistList.

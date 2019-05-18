@@ -9,6 +9,7 @@
 #ifndef DROGI_STRINGVECTOR_H
 #define DROGI_STRINGVECTOR_H
 
+/// A vector of strings. Dynamically allocates memory.
 typedef struct StringVector StringVector;
 
 /**
