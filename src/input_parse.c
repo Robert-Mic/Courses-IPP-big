@@ -49,13 +49,37 @@ int parseRouteDescription(Map *map, char **args) {
     bool loop = true;
     int i = 1;
 
-    while (loop) {
+    while (loop) {  // The command must be valid
         if (args[i + 1] == NULL || args[i + 2] == NULL || args[i + 3] == NULL)
             return COMMAND_FAILED;
         if (invalidCityName(args[i]))
             return COMMAND_FAILED;
         if (invalidCityName(args[i + 3]))
             return COMMAND_FAILED;
+        int length = getNumber(args[i + 1]);
+        int date = getNumber(args[i + 2]);
+        if (date == 0 || length <= 0)
+            return COMMAND_FAILED;
+
+        int city1_num = find(map->name_to_int, args[i]);
+        int city2_num = find(map->name_to_int, args[i + 3]);
+
+        if (city1_num != NOT_FOUND && city2_num != NOT_FOUND) {
+            Edge *edge = findEdgeTo(map->graph->tab[city1_num], city2_num);
+            if (edge) {
+                if (edge->length != length || edge->year > date)
+                    return COMMAND_FAILED;
+            }
+        }
+        i += 3;
+        if (args[i + 1] == NULL)
+            loop = false;
+    }
+
+    loop = true;
+    i = 1;
+
+    while (loop) {
         int length = getNumber(args[i + 1]);
         int date = getNumber(args[i + 2]);
         if (date == 0 || length <= 0)
@@ -71,12 +95,8 @@ int parseRouteDescription(Map *map, char **args) {
         else {
             Edge *edge = findEdgeTo(map->graph->tab[city1_num], city2_num);
             if (edge) {
-                if (edge->length != length || edge->year > date)
-                    return COMMAND_FAILED;
-                else {
-                    if (!repairRoad(map, args[i], args[i + 3], date))
-                        return MEMORY_ERROR;
-                }
+                if (!repairRoad(map, args[i], args[i + 3], date))
+                    return MEMORY_ERROR;
             }
             else {
                 if (!addRoad(map, args[i], args[i + 3], (unsigned)length, date))

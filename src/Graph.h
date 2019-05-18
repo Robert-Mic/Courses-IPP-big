@@ -14,7 +14,6 @@
 #include "utils.h"
 
 /** @brief Performs Dijkstra's algorithm on map's graph.
- *
  * The function treats a path that goes from routes start to it's end
  * as impassable, if routeId is specified.
  * @param[in] map - A pointer to the map that the algorithm is used on.
@@ -31,8 +30,7 @@
 int dijkstra(Map *map, int without_route, uint64_t *dist, int start, int finish);
 
 /** @brief Performs Dijkstra's algorithm on map's graph.
- *
- * The function treats a path that goes from country roads start to it's end
+ * The function treats a path that goes from routes start to it's end
  * as impassable, if routeId is specified. It assumes one of the edges is
  * deleted and will go from both sides to imitate the result of dijkstra1.
  * @param[in] map - A pointer to the map that the algorithm is used on.
