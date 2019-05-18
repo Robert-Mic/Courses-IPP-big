@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include "hashmap.h"
 #include "vector_stringvector.h"
-#include "vector_verticevector.h"
+#include "vector_vertexvector.h"
 #include "routedescription.h"
 
 /// A structure holding the map of routes.
@@ -27,7 +27,7 @@ struct Map {
     CityHashMap *name_to_int; /**< Hashmap that converts city names to indexes.*/
     StringVector *int_to_name;  /**< Remembers the name of the city by given id.*/
     int city_number;  /**< The current number of cities.*/
-    VerticeVector *graph;  /**< Structure to hold the graph of roads.*/
+    VertexVector *graph;  /**< Structure to hold the graph of roads.*/
     RouteDesc *routes;  /**< Structure holding information about current routes.*/
 };
 

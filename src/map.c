@@ -2,7 +2,7 @@
 #include "hashmap.h"
 #include "routedescription.h"
 #include "vector_stringvector.h"
-#include "vector_verticevector.h"
+#include "vector_vertexvector.h"
 #include "vector_charvector.h"
 #include "logic.h"
 #include "constants.h"
@@ -36,7 +36,7 @@ Map* newMap(void) {
         return NULL;
     }
 
-    map->graph = newVerticeVector();
+    map->graph = newVertexVector();
     if (map->graph == NULL) {
         freeHashmap(map->name_to_int);
         freeStringVector(map->int_to_name);
@@ -48,7 +48,7 @@ Map* newMap(void) {
     if (map->routes == NULL) {
         freeHashmap(map->name_to_int);
         freeStringVector(map->int_to_name);
-        freeVerticeVector(map->graph);
+        freeVertexVector(map->graph);
         free(map);
         return NULL;
     }
@@ -65,7 +65,7 @@ void deleteMap(Map *map) {
         return;
     freeHashmap(map->name_to_int);
     freeStringVector(map->int_to_name);
-    freeVerticeVector(map->graph);
+    freeVertexVector(map->graph);
     free(map->routes);
     free(map);
 }
@@ -92,15 +92,15 @@ bool addRoad(Map *map, const char *city1, const char *city2,
             return false;
         }
 
-        Vertice *city1_vertice = newVertice(map->city_number);
-        if (city1_vertice == NULL) {
+        Vertex *city1_vertex = newVertex(map->city_number);
+        if (city1_vertex == NULL) {
             stringVectorPop(map->int_to_name);
             return false;
         }
 
-        if (verticeVectorPush(map->graph, city1_vertice) == ALLOCATION_FAILURE) {
+        if (vertexVectorPush(map->graph, city1_vertex) == ALLOCATION_FAILURE) {
             stringVectorPop(map->int_to_name);
-            freeVertice(city1_vertice);
+            freeVertex(city1_vertex);
             return false;
         }
 
@@ -117,15 +117,15 @@ bool addRoad(Map *map, const char *city1, const char *city2,
             return false;
         }
 
-        Vertice *city2_vertice = newVertice(map->city_number);
-        if (city2_vertice == NULL) {
+        Vertex *city2_vertex = newVertex(map->city_number);
+        if (city2_vertex == NULL) {
             stringVectorPop(map->int_to_name);
             return false;
         }
 
-        if (verticeVectorPush(map->graph, city2_vertice) == ALLOCATION_FAILURE) {
+        if (vertexVectorPush(map->graph, city2_vertex) == ALLOCATION_FAILURE) {
             stringVectorPop(map->int_to_name);
-            freeVertice(city2_vertice);
+            freeVertex(city2_vertex);
             return false;
         }
 
@@ -391,7 +391,7 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
     int start = map->routes[route].start;
     int finish = map->routes[route].finish;
     int last = -1;
-    Vertice *vertice = map->graph->tab[start];
+    Vertex *vertex = map->graph->tab[start];
 
     sprintf(buff, "%d", route);
     if (addOrFree(output, buff, buff))
@@ -401,8 +401,8 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
     if (addOrFree(output, map->int_to_name->tab[start], buff))
         return NULL;
 
-    while (vertice->number != finish) {
-        Edge *edge = findEdgeWithRoute(vertice, route, last);
+    while (vertex->number != finish) {
+        Edge *edge = findEdgeWithRoute(vertex, route, last);
         if (edge == NULL)
             assert(false);
         if (addOrFree(output, ";", buff))
@@ -422,9 +422,9 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         if (addOrFree(output, ";", buff))
             return NULL;
 
-        last = vertice->number;
-        vertice = map->graph->tab[edge->where];
-        if (addOrFree(output, map->int_to_name->tab[vertice->number], buff))
+        last = vertex->number;
+        vertex = map->graph->tab[edge->where];
+        if (addOrFree(output, map->int_to_name->tab[vertex->number], buff))
             return NULL;
     }
 

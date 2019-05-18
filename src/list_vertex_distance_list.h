@@ -1,47 +1,47 @@
 /** @file
- * List of vertices' distance class interface.
+ * List of vertexes' distance class interface.
  *
  * @author Robert Michna <rm406247@students.mimuw.edu.pl>
  * @copyright Uniwersytet Warszawski
  * @date 10.04.2019
  */
 
-#ifndef DROGI_LIST_VERTICE_DISTANCELIST_H
-#define DROGI_LIST_VERTICE_DISTANCELIST_H
+#ifndef DROGI_LIST_VERTEX_DISTANCELIST_H
+#define DROGI_LIST_VERTEX_DISTANCELIST_H
 
 #include <stdint.h>
-#include "vertice.h"
+#include "vertex.h"
 
-/// A list of vertices' distances.
-typedef struct VerticeDistanceList DistList;
+/// A list of vertexes' distances.
+typedef struct VertexDistanceList DistList;
 
 /**
- * A list of vertices' distances.
+ * A list of vertexes' distances.
  */
-struct VerticeDistanceList {
-    uint64_t dist;  /**< The calculated distance of the vertice.*/
-    Vertice *vertice; /**< A pointer to the vertice.*/
+struct VertexDistanceList {
+    uint64_t dist;  /**< The calculated distance of the vertex.*/
+    Vertex *vertex; /**< A pointer to the vertex.*/
     DistList *next;  /**< A pointer to the next element of the list or NULL.*/
 };
 
 /** @brief Creates new DistList.
  * Creates new DistList. Has to be freed by @ref freeDistList.
- * @param[in] vertice - A pointer to the graph's vertice.
- * @param[in] distance - The distance associated to the vertice.
+ * @param[in] vertex - A pointer to the graph's vertex.
+ * @param[in] distance - The distance associated to the vertex.
  * @return New IntList structure or NULL if memory allocation failed.
  */
-DistList* newDistList(Vertice *vertice, uint64_t distance);
+DistList* newDistList(Vertex *vertex, uint64_t distance);
 
 /** @brief adds a new DistList element to the list after the specified element.
  *
  * @param[in] where - A pointer to the element after which a new element will be
  * added.
- * @param[in] vertice - A pointer to the vertice.
- * @param[in] distance - The distance to the specified vertice.
+ * @param[in] vertex - A pointer to the vertex.
+ * @param[in] distance - The distance to the specified vertex.
  * @return On successful memory allocation returns @p ALLOCATION_SUCCESS.
  * If memory allocation fails it returns @p ALLOCATION_FAILURE.
  */
-int addDistAfter(DistList *where, Vertice *vertice, uint64_t distance);
+int addDistAfter(DistList *where, Vertex *vertex, uint64_t distance);
 
 /** @brief Frees the memory allocated by structure pointed by @p list.
  *
@@ -80,4 +80,4 @@ int isEmptyDistList(DistList *it);
  */
 DistList* findBeforeMin(DistList *it);
 
-#endif //DROGI_LIST_VERTICE_DISTANCELIST_H
+#endif //DROGI_LIST_VERTEX_DISTANCELIST_H

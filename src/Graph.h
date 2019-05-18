@@ -65,7 +65,7 @@ int markRoute(Map *map, int route, uint64_t *dist, int start, int finish);
  * @param[in] map - A pointer to the map which graph is used.
  * @param[in] route - ID of route that this function marks.
  * @param[in] dist - An array of lengths calculated by Dijkstra1 or Dijkstra2.
- * @param[in] where - Stores the information about the vertice it is currently on.
+ * @param[in] where - Stores the information about the vertex it is currently on.
  * @param[in] oldest - Stores the information about the oldest edge this path has
  * traversed through.
  * @param finish - Stores the information about the destination.

@@ -10,7 +10,7 @@
 #include "map.h"
 #include "constants.h"
 #include "utils.h"
-#include "list_vertice_distancelist.h"
+#include "list_vertex_distance_list.h"
 
 /// Signalizes a wrongly chosen route path.
 #define BAD_ROAD -1
@@ -26,12 +26,12 @@ int dixtra(Map *map, uint64_t *dist, int start, int finish) {
 
     while (!isEmptyDistList(queue)) {
         DistList *res = findBeforeMin(queue);
-        Vertice *vertice = res->next->vertice;
+        Vertex *vertex = res->next->vertex;
         removeNextDist(res);
-        for (int i = 0; i < vertice->edges->current_size; i++) {
-            Edge *edge = vertice->edges->tab[i];
-            if (dist[edge->where] > dist[vertice->number] + edge->length) {
-                dist[edge->where] = dist[vertice->number] + edge->length;
+        for (int i = 0; i < vertex->edges->current_size; i++) {
+            Edge *edge = vertex->edges->tab[i];
+            if (dist[edge->where] > dist[vertex->number] + edge->length) {
+                dist[edge->where] = dist[vertex->number] + edge->length;
                 addDistAfter(queue, map->graph->tab[edge->where], dist[edge->where]);
             }
         }
@@ -49,13 +49,13 @@ int dijkstra(Map *map, int without_route, uint64_t *dist, int start, int finish)
     if (without_route > 0) {
         int route_start = map->routes[without_route].start;
         int route_finish = map->routes[without_route].finish;
-        Vertice *vertice = map->graph->tab[route_start];
+        Vertex *vertex = map->graph->tab[route_start];
         int last = -1;
-        while (vertice->number != route_finish) {
-            dist[vertice->number] = 0;
-            Edge *edge = findEdgeWithRoute(vertice, without_route, last);
-            last = vertice->number;
-            vertice = map->graph->tab[edge->where];
+        while (vertex->number != route_finish) {
+            dist[vertex->number] = 0;
+            Edge *edge = findEdgeWithRoute(vertex, without_route, last);
+            last = vertex->number;
+            vertex = map->graph->tab[edge->where];
         }
     }
 
@@ -72,29 +72,29 @@ int dijkstra2(Map *map, int without_route, uint64_t *dist, int start, int finish
         int route_start = map->routes[without_route].start;
         int route_finish = map->routes[without_route].finish;
         int last;
-        Vertice *vertice;
+        Vertex *vertex;
         Edge *edge;
 
         last = -1;
-        vertice = map->graph->tab[route_start];
-        dist[vertice->number] = 0;
-        edge = findEdgeWithRoute(vertice, without_route, last);
+        vertex = map->graph->tab[route_start];
+        dist[vertex->number] = 0;
+        edge = findEdgeWithRoute(vertex, without_route, last);
         while (edge != NULL) {
-            dist[vertice->number] = 0;
-            last = vertice->number;
-            vertice = map->graph->tab[edge->where];
-            edge = findEdgeWithRoute(vertice, without_route, last);
+            dist[vertex->number] = 0;
+            last = vertex->number;
+            vertex = map->graph->tab[edge->where];
+            edge = findEdgeWithRoute(vertex, without_route, last);
         }
 
         last = -1;
-        vertice = map->graph->tab[route_finish];
-        dist[vertice->number] = 0;
-        edge = findEdgeWithRoute(vertice, without_route, last);
+        vertex = map->graph->tab[route_finish];
+        dist[vertex->number] = 0;
+        edge = findEdgeWithRoute(vertex, without_route, last);
         while (edge != NULL) {
-            dist[vertice->number] = 0;
-            last = vertice->number;
-            vertice = map->graph->tab[edge->where];
-            edge = findEdgeWithRoute(vertice, without_route, last);
+            dist[vertex->number] = 0;
+            last = vertex->number;
+            vertex = map->graph->tab[edge->where];
+            edge = findEdgeWithRoute(vertex, without_route, last);
         }
     }
 
@@ -201,14 +201,14 @@ bool isOnRoute(Map *map, int route, int city) {
     int start = map->routes[route].start;
     int finish = map->routes[route].finish;
     int last = -1;
-    Vertice *vertice = map->graph->tab[start];
-    while (vertice->number != finish) {
-        if (vertice->number == city) {
+    Vertex *vertex = map->graph->tab[start];
+    while (vertex->number != finish) {
+        if (vertex->number == city) {
             return true;
         }
-        Edge *edge = findEdgeWithRoute(vertice, route, last);
-        last = vertice->number;
-        vertice = map->graph->tab[edge->where];
+        Edge *edge = findEdgeWithRoute(vertex, route, last);
+        last = vertex->number;
+        vertex = map->graph->tab[edge->where];
     }
     return city == finish;
 }

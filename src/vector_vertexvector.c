@@ -4,15 +4,15 @@
 
 #include <stdlib.h>
 #include "constants.h"
-#include "vector_verticevector.h"
+#include "vector_vertexvector.h"
 
-VerticeVector* newVerticeVector() {
-    VerticeVector *vector = malloc(sizeof(VerticeVector));
+VertexVector* newVertexVector() {
+    VertexVector *vector = malloc(sizeof(VertexVector));
     if (vector == NULL)
         return NULL;
     vector->current_size = 0;
     vector->max_size = 4;
-    vector->tab = malloc((sizeof(Vertice*) * vector->max_size));
+    vector->tab = malloc((sizeof(Vertex*) * vector->max_size));
     if (vector->tab == NULL) {
         free(vector);
         return NULL;
@@ -20,31 +20,31 @@ VerticeVector* newVerticeVector() {
     return vector;
 }
 
-int verticeVectorPush(VerticeVector *vector, Vertice *vertice) {
+int vertexVectorPush(VertexVector *vector, Vertex *vertex) {
     if (vector->current_size + 1 > vector->max_size) {
         vector->max_size *= 2;
-        Vertice **new_tab = realloc(vector->tab, sizeof(Vertice*) * vector->max_size);
+        Vertex **new_tab = realloc(vector->tab, sizeof(Vertex*) * vector->max_size);
         if (new_tab == NULL) {
             return ALLOCATION_FAILURE;
         }
         vector->tab = new_tab;
     }
 
-    vector->tab[vector->current_size++] = vertice;
+    vector->tab[vector->current_size++] = vertex;
     return ALLOCATION_SUCCESS;
 }
 
-void freeVerticeVector(VerticeVector *vector) {
+void freeVertexVector(VertexVector *vector) {
     for (int i = 0; i < vector->current_size; i++) {
-        freeVertice(vector->tab[i]);
+        freeVertex(vector->tab[i]);
     }
     free(vector->tab);
     free(vector);
 }
 
-void verticeVectorPop(VerticeVector *vector) {
+void vertexVectorPop(VertexVector *vector) {
     if (vector->current_size > 0) {
-        freeVertice(vector->tab[vector->current_size - 1]);
+        freeVertex(vector->tab[vector->current_size - 1]);
         vector->current_size -= 1;
     }
 }

@@ -5,21 +5,21 @@
 
 #include <stdlib.h>
 #include "constants.h"
-#include "list_vertice_distancelist.h"
+#include "list_vertex_distance_list.h"
 
-DistList* newDistList(Vertice *vertice, uint64_t distance) {
+DistList* newDistList(Vertex *vertex, uint64_t distance) {
     DistList* list = malloc(sizeof(DistList));
     if (list == NULL) {
         return NULL;
     }
-    list->vertice = vertice;
+    list->vertex = vertex;
     list->dist = distance;
     list->next = NULL;
     return list;
 }
 
-int addDistAfter(DistList *where, Vertice *vertice, uint64_t distance) {
-    DistList *new_dist = newDistList(vertice, distance);
+int addDistAfter(DistList *where, Vertex *vertex, uint64_t distance) {
+    DistList *new_dist = newDistList(vertex, distance);
     if (new_dist == NULL) {
         return ALLOCATION_FAILURE;
     }
