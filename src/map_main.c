@@ -4,7 +4,6 @@
 #include <string.h>
 #include <stdio.h>
 #include "hashmap.h"
-#include "vector_stringvector.h"
 #include "list_intlist.h"
 #include "constants.h"
 #include "map.h"
@@ -14,8 +13,6 @@
 #include "input_parse.h"
 
 #undef NDEBUG
-
-#include <assert.h>
 
 int main() {
     Map* m = newMap();

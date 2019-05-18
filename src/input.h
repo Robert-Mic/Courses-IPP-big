@@ -12,6 +12,7 @@
 #include "constants.h"
 #include "vector_charvector.h"
 
+/// Value signalizing end of a file.
 #define FILE_END 3
 
 /** @brief Reads a line from standard input.

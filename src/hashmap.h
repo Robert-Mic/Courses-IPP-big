@@ -9,8 +9,11 @@
 #ifndef DROGI_HASHMAP_H
 #define DROGI_HASHMAP_H
 
+/// The default prime MODULO number.
 #define MOD 1770134209
+/// The default threshold after which we resize the hashmap.
 #define THRESHHOLD 0.75
+/// A value signalizing that no value was found.
 #define NOT_FOUND -1
 
 /**

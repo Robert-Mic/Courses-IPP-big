@@ -12,7 +12,9 @@
 #include "map.h"
 #include "constants.h"
 
+/// Value signalizing wrong command.
 #define COMMAND_FAILED 11
+/// Value signalizing that the command ended successfully.
 #define COMMAND_SUCCEEDED 12
 
 /** @brief Prints "ERROR @p num" to stderr.

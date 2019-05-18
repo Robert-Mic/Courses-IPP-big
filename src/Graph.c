@@ -12,6 +12,7 @@
 #include "utils.h"
 #include "list_vertice_distancelist.h"
 
+/// Signalizes a wrongly chosen route path.
 #define BAD_ROAD -1
 
 int dixtra(Map *map, uint64_t *dist, int start, int finish) {
