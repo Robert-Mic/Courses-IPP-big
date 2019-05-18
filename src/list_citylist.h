@@ -9,6 +9,7 @@
 #ifndef DROGI_CITYSLIST_H
 #define DROGI_CITYSLIST_H
 
+/// A list of <city name, city index / number> pairs.
 typedef struct CityList CityList;
 
 /**

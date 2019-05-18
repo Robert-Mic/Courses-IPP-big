@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include "vertice.h"
 
+/// A list of vertices' distances.
 typedef struct VerticeDistanceList DistList;
 
 /**
@@ -25,7 +26,8 @@ struct VerticeDistanceList {
 
 /** @brief Creates new DistList.
  * Creates new DistList. Has to be freed by @ref freeDistList.
- * @param[in] vertice - A pointer to
+ * @param[in] vertice - A pointer to the graph's vertice.
+ * @param[in] distance - The distance associated to the vertice.
  * @return New IntList structure or NULL if memory allocation failed.
  */
 DistList* newDistList(Vertice *vertice, uint64_t distance);

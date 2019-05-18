@@ -9,6 +9,7 @@
 #ifndef DROGI_INTLIST_H
 #define DROGI_INTLIST_H
 
+/// A list of integers.
 typedef struct IntegerList IntList;
 
 /**
@@ -27,8 +28,8 @@ struct IntegerList {
 IntList* newIntList(int val);
 
 /** @brief adds an integer to the list after the specified element.
- *
- * @param[in] val - new elements value.
+ * @param[in,out] where - A pointer to the list we want  to modify.
+ * @param[in] val - New element's value.
  * @return On successful memory allocation returns @p ALLOCATION_SUCCESS.
  * If memory allocation fails it returns @p ALLOCATION_FAILURE.
  */

@@ -17,7 +17,7 @@
 #include "vector_verticevector.h"
 #include "routedescription.h"
 
-
+/// A structure holding the map of routes.
 typedef struct Map Map;
 
 /**
