@@ -29,16 +29,20 @@ int getNumber(const char *number) {
 
     for (; number[i] >= '0' && number[i] <= '9'; i++) {
 
-        if (ret > INT_MAX / 10 || ret * 10 > INT_MAX - (number[i] - '0'))
+        if (mult == -1
+            && (ret < INT_MIN / 10 || ret * 10 < INT_MIN + (number[i] - '0')))
+            return 0;
+        if (mult == 1
+            && (ret > INT_MAX / 10 || ret * 10 > INT_MAX - (number[i] - '0')))
             return 0; //value too big
 
         ret *= 10;
-        ret += number[i] - '0';
+        ret += (number[i] - '0') * mult;
     }
 
     if (number[i] != 0)
         return 0; //input should end null character
-    return ret * mult;
+    return ret;
 }
 
 int parseRouteDescription(Map *map, char **args) {
@@ -48,6 +52,8 @@ int parseRouteDescription(Map *map, char **args) {
 
     bool loop = true;
     int i = 1;
+    if (args[1] == NULL)
+        return COMMAND_FAILED;
 
     while (loop) {  // The command must be valid
         if (args[i + 1] == NULL || args[i + 2] == NULL || args[i + 3] == NULL)
@@ -82,8 +88,6 @@ int parseRouteDescription(Map *map, char **args) {
     while (loop) {
         int length = getNumber(args[i + 1]);
         int date = getNumber(args[i + 2]);
-        if (date == 0 || length <= 0)
-            return COMMAND_FAILED;
 
         int city1_num = find(map->name_to_int, args[i]);
         int city2_num = find(map->name_to_int, args[i + 3]);
