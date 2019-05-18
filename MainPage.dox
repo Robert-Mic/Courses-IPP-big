@@ -1,14 +1,14 @@
 /**
-@mainpage Dokumentacja zadania drogi
+@mainpage Task Drogi documentation
 
-### Treść zadania
+### Task description
 
-Uwaga: aktualna treść zadania znajduje się w [Moodle'u](https://moodle.mimuw.edu.pl).
+Most recent version of the task's description can be found on https://moodle.mimuw.edu.pl
+In short: create a structure and it's functions that allow storing a graph of roads and creating
+routes. A route is a path (a set of routes) from one city to another.
 
-### Opis programu
+### Programs description
 
-Tegoroczne duże zadanie polega na zaimplementowaniu operacji na mapach drogowych.
-
-TODO
+This years big task is to implement operations on routes.
 
 */
