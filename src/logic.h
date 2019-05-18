@@ -57,7 +57,7 @@ int addOrFree(CharVector *vector, char *val, char *free_buff);
  * @return On success returns @p true, returns @p false if memory allocation fails.
  */
 bool recoverEdge(Map *map, int city1_num, int city2_num,
-        IntList *routes, int length, int year);
+        IntList *routes, unsigned length, int year);
 
 /** @brief Marks a route on the edges.
  *

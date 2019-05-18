@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "edge.h"
 
-Edge* newEdge(int where, int length, int year) {
+Edge* newEdge(int where, unsigned length, int year) {
     Edge *new_edge = malloc(sizeof(Edge));
     if (new_edge == NULL)
         return NULL;

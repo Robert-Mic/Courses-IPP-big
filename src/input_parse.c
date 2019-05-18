@@ -11,16 +11,21 @@
 #include "utils.h"
 #include "logic.h"
 
-
 void error(uint64_t nr) {
     fprintf(stderr, "ERROR %"PRId64"\n", nr);
 }
 
-/// 0 signales invalid input as it is not a valid argument for map functions
-int getNumber(const char *number) {
-    int ret = 0;
+/**
+ * INT64_MIN signales invalid input as it is not a valid argument for map
+ * functions
+ */
+int64_t getNumber(const char *number) {
+    int64_t ret = 0;
     int i = 0;
     int mult = 1;
+
+    if (number[0] == 0 || (number[0] == '-' && number[1] == 0))
+        return INT64_MIN;
 
     if (number[0] == '-') {
         mult = -1;
@@ -29,24 +34,23 @@ int getNumber(const char *number) {
 
     for (; number[i] >= '0' && number[i] <= '9'; i++) {
 
-        if (mult == -1
-            && (ret < INT_MIN / 10 || ret * 10 < INT_MIN + (number[i] - '0')))
-            return 0;
-        if (mult == 1
-            && (ret > INT_MAX / 10 || ret * 10 > INT_MAX - (number[i] - '0')))
-            return 0; //value too big
+        if (ret > INT64_MAX / 10 || ret * 10 > INT64_MAX - (number[i] - '0'))
+            return INT64_MIN; //value too big
 
         ret *= 10;
-        ret += (number[i] - '0') * mult;
+        ret += (number[i] - '0');
     }
 
     if (number[i] != 0)
-        return 0; //input should end null character
-    return ret;
+        return INT64_MIN; //input should end with null character
+    return ret * mult;
 }
 
 int parseRouteDescription(Map *map, char **args) {
-    int route = getNumber(args[0]);
+    int64_t num = getNumber(args[0]);
+    if (num <= 0 || num >= MAX_ROUTES)
+        return COMMAND_FAILED;
+    int route = (int)num;
     if (route <= 0 || route >= MAX_ROUTES || map->routes[route].start != -1)
         return COMMAND_FAILED;
 
@@ -62,9 +66,13 @@ int parseRouteDescription(Map *map, char **args) {
             return COMMAND_FAILED;
         if (invalidCityName(args[i + 3]))
             return COMMAND_FAILED;
-        int length = getNumber(args[i + 1]);
-        int date = getNumber(args[i + 2]);
-        if (date == 0 || length <= 0)
+        int64_t length = getNumber(args[i + 1]);
+        int64_t date = getNumber(args[i + 2]);
+        if (date == 0
+            || length <= 0
+            || length > UINT_MAX
+            || date < INT_MIN
+            || date > INT_MAX)
             return COMMAND_FAILED;
 
         int city1_num = find(map->name_to_int, args[i]);
@@ -86,14 +94,14 @@ int parseRouteDescription(Map *map, char **args) {
     i = 1;
 
     while (loop) {
-        int length = getNumber(args[i + 1]);
-        int date = getNumber(args[i + 2]);
+        unsigned length = (unsigned)getNumber(args[i + 1]);
+        int date = (int)getNumber(args[i + 2]);
 
         int city1_num = find(map->name_to_int, args[i]);
         int city2_num = find(map->name_to_int, args[i + 3]);
 
         if (city1_num == NOT_FOUND || city2_num == NOT_FOUND) {
-            if (!addRoad(map, args[i], args[i + 3], (unsigned)length, date))
+            if (!addRoad(map, args[i], args[i + 3], length, date))
                 return MEMORY_ERROR;
         }
         else {
@@ -103,7 +111,7 @@ int parseRouteDescription(Map *map, char **args) {
                     return MEMORY_ERROR;
             }
             else {
-                if (!addRoad(map, args[i], args[i + 3], (unsigned)length, date))
+                if (!addRoad(map, args[i], args[i + 3], length, date))
                     return MEMORY_ERROR;
             }
         }
@@ -137,10 +145,12 @@ int parseInput(Map *map, char **args) {
     if (strcmp(args[0], "getRouteDescription") == 0) {
         if (args[1] == NULL || args[2] != NULL)
             return COMMAND_FAILED;
-
-        int route = getNumber(args[1]);
-        char const *result = getRouteDescription(map, (unsigned)route);
-        if (result)
+        int64_t num = getNumber(args[1]);
+        if (num < 0 || num > UINT_MAX)
+            return COMMAND_FAILED;
+        unsigned route = (unsigned)num;
+        char const *result = getRouteDescription(map, route);
+        if (result != NULL)
             printf("%s\n", result);
         else
             return COMMAND_FAILED;
@@ -152,16 +162,17 @@ int parseInput(Map *map, char **args) {
     else if (strcmp(args[0], "addRoad") == 0) {
         if (!args[1] || !args[2] || !args[3] || !args[4] || args[5])
             return COMMAND_FAILED;
-        int length, year;
+        int64_t length, year;
         if (
             invalidCityName(args[1])
              || invalidCityName(args[2])
-             || (length = getNumber(args[3])) <= 0
-             || (year = getNumber(args[4]))  == 0
-        )
+             || (length = getNumber(args[3])) < 0
+             || length > UINT_MAX
+             || (year = getNumber(args[4]))  < INT_MIN
+             || year > INT_MAX)
             return COMMAND_FAILED;
 
-        if (!addRoad(map, args[1], args[2], (unsigned)length, year))
+        if (!addRoad(map, args[1], args[2], (unsigned)length, (int)year))
             return COMMAND_FAILED;
         return COMMAND_SUCCEEDED;
     }
@@ -169,13 +180,14 @@ int parseInput(Map *map, char **args) {
     else if (strcmp(args[0], "repairRoad") == 0) {
         if (!args[1] || !args[2] || !args[3] || args[4])
             return COMMAND_FAILED;
-        int year;
+        int64_t year;
         if (invalidCityName(args[1])
             || invalidCityName(args[2])
-            || (year = getNumber(args[3]))  == 0)
+            || (year = getNumber(args[3]))  < INT_MIN
+            || year > INT_MAX)
             return COMMAND_FAILED;
 
-        if (!repairRoad(map, args[1], args[2], year))
+        if (!repairRoad(map, args[1], args[2], (int)year))
             return COMMAND_FAILED;
         return COMMAND_SUCCEEDED;
     }

@@ -48,7 +48,7 @@ Edge* findEdgeWithRoute(Vertice *vertice, int route, int excluded) {
     return NULL;
 }
 
-int addEdge(Vertice *vertice, int where, int length, int year) {
+int addEdge(Vertice *vertice, int where, unsigned length, int year) {
     Edge *new_edge = newEdge(where, length, year);
     if (new_edge == NULL)
         return ALLOCATION_FAILURE;

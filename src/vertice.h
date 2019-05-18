@@ -67,7 +67,7 @@ Edge* findEdgeWithRoute(Vertice *vertice, int route, int excluded);
  * @return Returns @p ALLOCATION_SUCCESS on successful addition. Returns
  * @p ALLOCATION_FAILURE if the memory allocation fails. @see constants.h
  */
-int addEdge(Vertice *vertice, int where, int length, int year);
+int addEdge(Vertice *vertice, int where, unsigned length, int year);
 
 /** @brief Removes the @p Edge going to city with number @p where.
  * @param[in,out] vertice - A pointer to the vertice we want to modify.

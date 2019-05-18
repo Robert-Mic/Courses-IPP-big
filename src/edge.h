@@ -16,7 +16,7 @@
  */
 struct RoadEdge {
     int where;  /**< the number in graph this edge leads to.*/
-    int length;  /**< the length of the edge.*/
+    unsigned length;  /**< the length of the edge.*/
     int year;  /**< the year of last renovation of this edge.*/
     IntList *routes;  /**< list of numbers of routes passing through this edge.*/
 };
@@ -33,7 +33,7 @@ typedef struct RoadEdge Edge;
  * @param[in] year - The year of last renovation of this edge.
  * @return Pointer to the new created edge or NULL if memory allocation fails.
  */
-Edge* newEdge(int where, int length, int year);
+Edge* newEdge(int where, unsigned length, int year);
 
 /** @brief Frees the memory under the given Edge pointer.
  *

@@ -48,7 +48,7 @@ int addOrFree(CharVector *vector, char *val, char *free_buff) {
 }
 
 bool recoverEdge(Map *map, int city1_num, int city2_num,
-        IntList *routes, int length, int year) {
+        IntList *routes, unsigned length, int year) {
     Edge *edge1 = newEdge(city2_num, length, year);
     if (edge1 == NULL)
         return false;

@@ -322,7 +322,7 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
     }
 
     IntList *routes = edge->routes;
-    int length = edge->length;
+    unsigned length = edge->length;
     int year = edge->year;
     edge->routes = NULL;
 
