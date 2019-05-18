@@ -37,10 +37,10 @@ set(SOURCE_FILES
         src/edge.h
         src/list_intlist.c
         src/list_intlist.h
-        src/vertice.c
-        src/vertice.h
-        src/vector_verticevector.c
-        src/vector_verticevector.h
+        src/vertex.c
+        src/vertex.h
+        src/vector_vertexvector.c
+        src/vector_vertexvector.h
         src/routedescription.c
         src/routedescription.h
         src/vector_charvector.c
@@ -49,8 +49,8 @@ set(SOURCE_FILES
         src/Graph.h
         src/utils.c
         src/utils.h
-        src/list_vertice_distancelist.c
-        src/list_vertice_distancelist.h
+        src/list_vertex_distance_list.c
+        src/list_vertex_distance_list.h
         src/logic.c
         src/logic.h
         src/input.c
