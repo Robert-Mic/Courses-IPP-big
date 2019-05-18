@@ -139,9 +139,6 @@ int parseInput(Map *map, char **args) {
             return COMMAND_FAILED;
 
         int route = getNumber(args[1]);
-        if (route <= 0 || route >= MAX_ROUTES)
-            return COMMAND_FAILED;
-
         char const *result = getRouteDescription(map, (unsigned)route);
         if (result)
             printf("%s\n", result);
