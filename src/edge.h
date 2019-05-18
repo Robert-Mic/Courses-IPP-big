@@ -15,10 +15,10 @@
  * A structure representing a road / edge between two cities.
  */
 struct RoadEdge {
-    int where;  /**< the number in graph this edge leads to. */
-    int length;  /**< the length of the edge. */
-    int year;  /**< the year of last renovation of this edge. */
-    IntList *routes;  /**< list of numbers of routes passing through this edge. */
+    int where;  /**< the number in graph this edge leads to.*/
+    int length;  /**< the length of the edge.*/
+    int year;  /**< the year of last renovation of this edge.*/
+    IntList *routes;  /**< list of numbers of routes passing through this edge.*/
 };
 
 /**

@@ -16,9 +16,9 @@ typedef struct CityList CityList;
  * list element. @see hashmap.h
  */
 struct CityList {
-    char *name; /**< a string key */
-    int number;  /**< an int value paired to the key */
-    CityList *next; /**< pointer to the next <key,value> pair or NULL */
+    char *name; /**< a string key.*/
+    int number;  /**< an int value paired to the key.*/
+    CityList *next; /**< pointer to the next <key,value> pair or NULL.*/
 };
 
 /** @brief Creates new CityList.

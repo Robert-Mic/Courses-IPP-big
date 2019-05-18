@@ -10,7 +10,7 @@
 #define DROGI_HASHMAP_H
 
 #define MOD 1770134209
-#define TRESHHOLD 0.75
+#define THRESHHOLD 0.75
 #define NOT_FOUND -1
 
 /**

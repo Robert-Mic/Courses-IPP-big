@@ -17,17 +17,18 @@
 #include "vector_verticevector.h"
 #include "routedescription.h"
 
+
+typedef struct Map Map;
+
 /**
  * A structure holding the map of routes.
  */
-typedef struct Map Map;
-
 struct Map {
     CityHashMap *name_to_int; /**< Hashmap that converts city names to indexes.*/
     StringVector *int_to_name;  /**< Remembers the name of the city by given id.*/
-    int city_number;  /**< The current number of cities */
-    VerticeVector *graph;  /**< Structure to hold the graph of roads */
-    RouteDesc *routes;  /**< Structure holding information about current routes */
+    int city_number;  /**< The current number of cities.*/
+    VerticeVector *graph;  /**< Structure to hold the graph of roads.*/
+    RouteDesc *routes;  /**< Structure holding information about current routes.*/
 };
 
 /** @brief Creates a new map.

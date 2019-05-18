@@ -9,10 +9,14 @@
 #include "constants.h"
 #include "hashmap.h"
 
+/**
+ * Structure implementing hashmap. Resizes when @p current_load divided by
+ * @p size is greater than @p THRESHOLD
+ */
 struct CityToNumberHashMap {
-    int size;
-    int current_load;
-    CityList **city_list;
+    int size;  /**< The current size of the hashmap.*/
+    int current_load;  /**< The current load of the hashmap.*/
+    CityList **city_list;  /**< An array of Lists of cities with a given hash.*/
 };
 
 CityHashMap* newHashMap(int size) {
@@ -105,7 +109,7 @@ int put(CityHashMap *hashmap, const char *key, int number) {
     }
 
     hashmap->current_load += increase_load;
-    if ((float)hashmap->current_load / (float)hashmap->size >= TRESHHOLD) {
+    if ((float)hashmap->current_load / (float)hashmap->size >= THRESHHOLD) {
         return resize(hashmap);
     }
     return ALLOCATION_SUCCESS;

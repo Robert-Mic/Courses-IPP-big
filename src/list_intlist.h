@@ -15,8 +15,8 @@ typedef struct IntegerList IntList;
  * A list of integers.
  */
 struct IntegerList {
-    int val; /**< Element of the list */
-    IntList *next;  /**< A pointer to the next element or NULL */
+    int val; /**< Element of the list.*/
+    IntList *next;  /**< A pointer to the next element or NULL.*/
 };
 
 /** @brief Creates new IntList.
