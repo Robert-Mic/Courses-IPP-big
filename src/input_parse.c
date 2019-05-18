@@ -156,7 +156,7 @@ int parseInput(Map *map, char **args) {
             invalidCityName(args[1])
              || invalidCityName(args[2])
              || (length = getNumber(args[3])) <= 0
-             || (year = getNumber(args[5]))  == 0
+             || (year = getNumber(args[4]))  == 0
         )
             return COMMAND_FAILED;
 
@@ -171,7 +171,7 @@ int parseInput(Map *map, char **args) {
         int year;
         if (invalidCityName(args[1])
             || invalidCityName(args[2])
-            || (year = getNumber(args[5]))  == 0)
+            || (year = getNumber(args[3]))  == 0)
             return COMMAND_FAILED;
 
         if (!repairRoad(map, args[1], args[2], year))
