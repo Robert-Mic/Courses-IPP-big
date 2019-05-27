@@ -1,7 +1,6 @@
 //
 // Created by rober on 26.04.2019.
 //
-#include <stdio.h>
 #include <stdint.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -107,7 +106,6 @@ IntPair checkRouteDfs(Map *map, int route, uint64_t *dist, int where,
     if (finish == where) {
         return newIntPair(oldest, true);
     }
-    //printf("where = %d\n", where);
 
     IntPair result1 = newIntPair(INT_MIN, true);
     IntPair result2 = newIntPair(INT_MIN, true);
@@ -179,7 +177,7 @@ int markRouteDfs(Map *map, int route, uint64_t *dist, int where, int oldest, int
                 return ALLOCATION_SUCCESS;
         }
     }
-    assert(from >= 0); //should always be
+    assert(from >= 0);
     Edge *edge2 = findEdgeTo(map->graph->tab[where], from);
     removeNextInt(edge2->routes);
     return BAD_ROAD;

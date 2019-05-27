@@ -24,7 +24,7 @@ bool extRoute(Map *map, int route, uint64_t *dist, int start, int finish) {
         free(dist);
         return false;
     }
-    if (markRoute(map, route, dist, start, finish) == ALLOCATION_FAILURE) {
+    if (markRoute(map, route, dist, start, finish) != ALLOCATION_SUCCESS) {
         free(dist);
         return false;
     }

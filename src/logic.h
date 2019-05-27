@@ -23,7 +23,7 @@ bool invalidCityName(const char *city);
 
 /** @brief Extends route from @p start to @p finish. Used in @ref extendRoute.
  * Extends the route either from new to start or from finish to new.
- * Updates map routes. Frees the dist array specified in the parameter.
+ * Updates map's routes. Frees the dist array specified in the parameter.
  * @param[in,out] map – A pointer to the structure that stores the map of
  * roads.
  * @param[in] route - route's ID

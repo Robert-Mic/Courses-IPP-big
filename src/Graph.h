@@ -48,6 +48,7 @@ int dijkstra2(Map *map, int without_route, uint64_t *dist, int start, int finish
 
 /** @brief Updates the information on graphs edges that route traverses through them.
  * The dist array has to be initialised by Dijkstra1 or Dijkstra2 function.
+ * The route has to be passable from @p start to @p finish.
  * @param[in] map - A pointer to the map which graph is used.
  * @param[in] route - ID of route that this function marks.
  * @param[in] dist - An array of lengths calculated by Dijkstra1 or Dijkstra2.
@@ -61,13 +62,14 @@ int markRoute(Map *map, int route, uint64_t *dist, int start, int finish);
 
 /** @brief Checks if it is possible to pick a single best path for a route.
  * This recursive function checks if the possible routes that were found have a single
- * best to pick.
+ * best to pick. The route has to be passable from @p where to @p finish.
  * @param[in] map - A pointer to the map which graph is used.
  * @param[in] route - ID of route that this function marks.
  * @param[in] dist - An array of lengths calculated by Dijkstra1 or Dijkstra2.
  * @param[in] where - Stores the information about the vertex it is currently on.
  * @param[in] oldest - Stores the information about the oldest edge this path has
- * traversed through.
+ * traversed through. The default argument then calling this function should be
+ * @p MAX_INT.
  * @param finish - Stores the information about the destination.
  * @return IntPair <year, boolean> that holds the newest year the selected
  * path traverses and the information if it was picked unambiguously.

@@ -248,45 +248,60 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
         free(dist);
         return false;
     }
-    IntPair result1;
     distance1 = dist[city_num];
-    if (distance1 == UINT64_MAX)
-        result1 = newIntPair(0, false);
-    else
-        result1 = checkRouteDfs(map, routeId, dist, city_num, INT_MAX, finish);
 
     if (dijkstra(map, routeId, dist, city_num, start) == ALLOCATION_FAILURE) {
         free(dist);
         return false;
     }
-    IntPair result2;
     distance2 = dist[start];
-    if (distance2 == UINT64_MAX)
-        result2 = newIntPair(0, false);
-    else
-        result2 = checkRouteDfs(map, routeId, dist, start, INT_MAX, city_num);
+    if (distance1 == UINT64_MAX && distance2 == UINT64_MAX) {
+        free(dist);
+        return false;
+    }
 
+    if (distance1 == UINT64_MAX && distance2 == UINT64_MAX) {
+        free(dist);
+        return false;
+    }
 
-    if (result1.second == false) {
-        if (result2.second == true) {
-            return extRoute(map, routeId, dist, city_num, start);
-        }
-        else {
+    if (distance1 < distance2) {
+        if (dijkstra(map, routeId, dist, finish, city_num) == ALLOCATION_FAILURE) {
             free(dist);
             return false;
         }
+        if (markRoute(map, routeId, dist, finish, city_num) == ALLOCATION_FAILURE) {
+            free(dist);
+            return false;
+        }
+        map->routes[routeId].finish = city_num;
     }
-    else if (result1.second == result2.second) { //both are true
-        if (distance1 < distance2
-            || (distance1 == distance2 && result1.first > result2.first)) {
+    else if (distance2 < distance1) {
+        if (markRoute(map, routeId, dist, city_num, start) == ALLOCATION_FAILURE) {
+            free(dist);
+            return false;
+        }
+        map->routes[routeId].start = city_num;
+    }
+    else { //both distances are equal and different than UINT64_MAX
+        IntPair result2 = checkRouteDfs(map, routeId, dist, start, INT_MAX, city_num);
+        if (dijkstra(map, routeId, dist, finish, city_num) == ALLOCATION_FAILURE) {
+            free(dist);
+            return false;
+        }
+        IntPair result1 = checkRouteDfs(map, routeId, dist, city_num, INT_MAX, finish);
+        if (result1.first > result2.first) {
+            if (result1.second == false) {
+                free(dist);
+                return false;
+            }
             return extRoute(map, routeId, dist, finish, city_num);
         }
-        else if (distance1 == distance2 && result1.first == result2.first) {
-            free(dist);
-            return false;
-        }
-        else if (distance1 > distance2
-            || (distance1 == distance2 && result1.first < result2.first)) {
+        else if (result2.first > result1.first) {
+            if (result2.second == false) {
+                free(dist);
+                return false;
+            }
             return extRoute(map, routeId, dist, city_num, start);
         }
         else {
@@ -294,9 +309,8 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
             return false;
         }
     }
-    else { //result1.second is true and result2.second is false
-        return extRoute(map, routeId, dist, finish, city_num);
-    }
+    free(dist);
+    return true;
 }
 
 bool removeRoad(Map *map, const char *city1, const char *city2) {
