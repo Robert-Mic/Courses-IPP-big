@@ -3,6 +3,7 @@
 //
 
 #include <stdlib.h>
+#include <limits.h>
 #include "logic.h"
 #include "constants.h"
 #include "vector_charvector.h"
