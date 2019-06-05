@@ -23,19 +23,19 @@ bool invalidCityName(const char *city);
 
 /** @brief Validates route number.
  * Route number should fit @p unsigned constrains as it is casted to unsigned.
- * @param routeID
+ * @param[in] routeID - The route's number.
  * @return Returns @p true if the number is invalid and false otherwise.
  */
 bool invalidRouteNumber(int64_t routeID);
 
 /** Validates a number representing a road's length.
- * @param routeID
+ * @param[in] length - The length of the road.
  * @return Returns @p true if the number is invalid and false otherwise.
  */
 bool invalidEdgeLength(int64_t length);
 
 /** Validates a number representing a road's build year.
- * @param routeID
+ * @param[in] year - The year the road was built.
  * @return Returns @p true if the number is invalid and false otherwise.
  */
 bool invalidBuildYear(int64_t year);
