@@ -25,7 +25,8 @@ void error(uint64_t nr);
 /** @brief Parses the input converted by @ref split function.
  * Parses the input passed in the array of strings. The last element
  * of @p args must point to NULL. When parsing routeDescription the function
- * first checks if every parameter is legal and then tries to add the changes.
+ * first checks if every parameter is legal and if the route does not have
+ * re-occurring cities and then tries to add the changes.
  * @param[in,out] map - A pointer to map structure to which the changes will be
  * applied.
  * @param[in] args - An array of strings containing function arguments.

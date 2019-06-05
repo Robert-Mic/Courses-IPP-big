@@ -21,6 +21,25 @@
  */
 bool invalidCityName(const char *city);
 
+/** @brief Validates route number.
+ * Route number should fit @p unsigned constrains as it is casted to unsigned.
+ * @param routeID
+ * @return Returns @p true if the number is invalid and false otherwise.
+ */
+bool invalidRouteNumber(int64_t routeID);
+
+/** Validates a number representing a road's length.
+ * @param routeID
+ * @return Returns @p true if the number is invalid and false otherwise.
+ */
+bool invalidEdgeLength(int64_t length);
+
+/** Validates a number representing a road's build year.
+ * @param routeID
+ * @return Returns @p true if the number is invalid and false otherwise.
+ */
+bool invalidBuildYear(int64_t year);
+
 /** @brief Extends route from @p start to @p finish. Used in @ref extendRoute.
  * Extends the route either from new to start or from finish to new.
  * Updates map's routes. Frees the dist array specified in the parameter.

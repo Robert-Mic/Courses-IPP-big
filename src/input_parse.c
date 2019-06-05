@@ -16,7 +16,7 @@ void error(uint64_t nr) {
 }
 
 /**
- * INT64_MIN signales invalid input as it is not a valid argument for map
+ * INT64_MIN signals invalid input as it is not a valid argument for map
  * functions
  */
 int64_t getNumber(const char *number) {
@@ -46,34 +46,56 @@ int64_t getNumber(const char *number) {
     return ret * mult;
 }
 
-int parseRouteDescription(Map *map, char **args) {
+bool validateRouteDescription(Map *map, char **args) {
     int64_t num = getNumber(args[0]);
     if (num <= 0 || num >= MAX_ROUTES)
-        return COMMAND_FAILED;
-    int route = (int)num;
-    if (route <= 0 || route >= MAX_ROUTES || map->routes[route].start != -1)
-        return COMMAND_FAILED;
+        return false;
+
+    int size = 0;
+    while (args[size++] != NULL);
+    CityHashMap *names = newHashMap(size / 3);
 
     bool loop = true;
     int i = 1;
-    if (args[1] == NULL)
-        return COMMAND_FAILED;
+    if (args[1] == NULL) {
+        freeHashmap(names);
+        return false;
+    }
 
-    while (loop) {  // The command must be valid
-        if (args[i + 1] == NULL || args[i + 2] == NULL || args[i + 3] == NULL)
-            return COMMAND_FAILED;
-        if (invalidCityName(args[i]))
-            return COMMAND_FAILED;
-        if (invalidCityName(args[i + 3]))
-            return COMMAND_FAILED;
+    if (put(names, args[1], 0) == ALLOCATION_FAILURE) {
+        freeHashmap(names);
+        return false;
+    }
+
+    while (loop) {
+        if (args[i + 1] == NULL || args[i + 2] == NULL || args[i + 3] == NULL) {
+            freeHashmap(names);
+            return false;
+        }
+        if (invalidCityName(args[i])) {
+            freeHashmap(names);
+            return false;
+        }
+        if (invalidCityName(args[i + 3]) || find(names, args[i + 3]) != NOT_FOUND) {
+            freeHashmap(names);
+            return false;
+        }
+        else {
+            if (put(names, args[i + 3], 0) == ALLOCATION_FAILURE) {
+                freeHashmap(names);
+                return false;
+            }
+        }
         int64_t length = getNumber(args[i + 1]);
         int64_t date = getNumber(args[i + 2]);
         if (date == 0
             || length <= 0
             || length > UINT_MAX
             || date < INT_MIN
-            || date > INT_MAX)
-            return COMMAND_FAILED;
+            || date > INT_MAX) {
+            freeHashmap(names);
+            return false;
+        }
 
         int city1_num = find(map->name_to_int, args[i]);
         int city2_num = find(map->name_to_int, args[i + 3]);
@@ -81,17 +103,30 @@ int parseRouteDescription(Map *map, char **args) {
         if (city1_num != NOT_FOUND && city2_num != NOT_FOUND) {
             Edge *edge = findEdgeTo(map->graph->tab[city1_num], city2_num);
             if (edge) {
-                if (edge->length != length || edge->year > date)
-                    return COMMAND_FAILED;
+                if (edge->length != length || edge->year > date) {
+                    freeHashmap(names);
+                    return false;
+                }
             }
         }
         i += 3;
         if (args[i + 1] == NULL)
             loop = false;
     }
+    freeHashmap(names);
+    return true;
+}
 
-    loop = true;
-    i = 1;
+int parseRouteDescription(Map *map, char **args) {
+    if (validateRouteDescription(map, args) == false)
+        return COMMAND_FAILED;
+    int route = (int)getNumber(args[0]);
+    if (map->routes[route].start != -1)
+        return COMMAND_FAILED;
+
+
+    bool loop = true;
+    int i = 1;
 
     while (loop) {
         unsigned length = (unsigned)getNumber(args[i + 1]);
@@ -142,6 +177,7 @@ int parseRouteDescription(Map *map, char **args) {
 }
 
 int parseInput(Map *map, char **args) {
+    // getRouteDescription;routeId
     if (strcmp(args[0], "getRouteDescription") == 0) {
         if (args[1] == NULL || args[2] != NULL)
             return COMMAND_FAILED;
@@ -158,7 +194,7 @@ int parseInput(Map *map, char **args) {
 
         return COMMAND_SUCCEEDED;
     }
-
+    // addRoad;city1;city2;length;builtYear
     else if (strcmp(args[0], "addRoad") == 0) {
         if (!args[1] || !args[2] || !args[3] || !args[4] || args[5])
             return COMMAND_FAILED;
@@ -168,7 +204,7 @@ int parseInput(Map *map, char **args) {
              || invalidCityName(args[2])
              || (length = getNumber(args[3])) < 0
              || length > UINT_MAX
-             || (year = getNumber(args[4]))  < INT_MIN
+             || (year = getNumber(args[4])) < INT_MIN
              || year > INT_MAX)
             return COMMAND_FAILED;
 
@@ -176,18 +212,66 @@ int parseInput(Map *map, char **args) {
             return COMMAND_FAILED;
         return COMMAND_SUCCEEDED;
     }
-
+    // repairRoad;city1;city2;repairYear
     else if (strcmp(args[0], "repairRoad") == 0) {
         if (!args[1] || !args[2] || !args[3] || args[4])
             return COMMAND_FAILED;
         int64_t year;
         if (invalidCityName(args[1])
             || invalidCityName(args[2])
-            || (year = getNumber(args[3]))  < INT_MIN
+            || (year = getNumber(args[3])) < INT_MIN
             || year > INT_MAX)
             return COMMAND_FAILED;
 
         if (!repairRoad(map, args[1], args[2], (int)year))
+            return COMMAND_FAILED;
+        return COMMAND_SUCCEEDED;
+    }
+    // newRoute;routeId;city1;city2
+    else if (strcmp(args[0], "newRoute") == 0) {
+        if (!args[1] || !args[2] || !args[3] || args[4])
+            return COMMAND_FAILED;
+        int64_t routeId;
+        if (invalidRouteNumber(routeId = getNumber(args[1]))
+            || invalidCityName(args[2])
+            || invalidCityName(args[3]))
+            return COMMAND_FAILED;
+
+        if (!newRoute(map, (unsigned)routeId, args[2], args[3]))
+            return COMMAND_FAILED;
+        return COMMAND_SUCCEEDED;
+    }
+    // extendRoute;routeId;city
+    else if (strcmp(args[0], "extendRoute") == 0) {
+        if (!args[1] || !args[2] || args[3])
+            return COMMAND_FAILED;
+        int64_t routeId;
+        if (invalidRouteNumber(routeId = getNumber(args[1]))
+            || invalidCityName(args[2]))
+            return COMMAND_FAILED;
+        if (!extendRoute(map, (unsigned)routeId, args[2]))
+            return COMMAND_FAILED;
+        return COMMAND_SUCCEEDED;
+    }
+    // removeRoad;city1;city2
+    else if (strcmp(args[0], "removeRoad") == 0) {
+        if (!args[1] || !args[2] || args[3])
+            return COMMAND_FAILED;
+        if (invalidCityName(args[1])
+            || invalidCityName(args[2]))
+            return COMMAND_FAILED;
+        if (!removeRoad(map, args[1], args[2]))
+            return COMMAND_FAILED;
+        return COMMAND_SUCCEEDED;
+    }
+    // removeRoute;routeId
+    else if (strcmp(args[0], "removeRoute") == 0) {
+        if (!args[1] || args[2])
+            return COMMAND_FAILED;
+        int64_t routeId;
+        if (invalidRouteNumber(routeId = getNumber(args[1])))
+            return COMMAND_FAILED;
+        if (!removeRoute(map, (unsigned)routeId))
             return COMMAND_FAILED;
         return COMMAND_SUCCEEDED;
     }

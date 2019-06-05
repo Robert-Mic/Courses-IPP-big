@@ -144,6 +144,15 @@ bool extendRoute(Map *map, unsigned routeId, const char *city);
  */
 bool removeRoad(Map *map, const char *city1, const char *city2);
 
+/** Removes a route from the given map.
+ * @param[in,out] map - A pointer to the structure that stores the map of
+ * roads;
+ * @param routeId - The ID of the route that will be deleted.
+ * @return Returns @p true if the route was successfully removed. Returns @p
+ * false if routeId is invalid route number or if such route does not exist.
+ */
+bool removeRoute(Map *map, unsigned routeId);
+
 /** @brief Gets the information about currently existing route.
  * Returns a pointer to a string containing information about a route.
  * Allocates memory for this string. Returns an empty string if a route with

@@ -48,7 +48,8 @@ void freeHashmap(CityHashMap *hashmap);
  *
  * @param[in] hashmap - Pointer to the hashmap we want to search.
  * @param[in] key - The key we use to search for correlated value.
- * @return Returns an integer paired to the given key.
+ * @return Returns an integer paired to the given key or @p NOT_FOUND constant
+ * if no such key is contained.
  */
 int find(CityHashMap *hashmap, const char *key);
 

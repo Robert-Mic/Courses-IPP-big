@@ -33,7 +33,7 @@ int main() {
             int result = parseInput(m, args);
             freeSplit(args);
             if (result == COMMAND_SUCCEEDED) {
-                //printf("Succ %d\n", (int)line);
+                //do nothing
             }
             else {
                 error(line);

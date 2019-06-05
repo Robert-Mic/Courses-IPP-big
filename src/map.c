@@ -73,10 +73,10 @@ void deleteMap(Map *map) {
 bool addRoad(Map *map, const char *city1, const char *city2,
              unsigned length, int builtYear) {
     if (strcmp(city1, city2) == 0
-        || builtYear == 0
+        || invalidBuildYear(builtYear)
         || invalidCityName(city1)
         || invalidCityName(city2)
-        || length <= 0) {
+        || invalidEdgeLength(length)) {
         return false;
     }
 
@@ -151,7 +151,7 @@ bool addRoad(Map *map, const char *city1, const char *city2,
 
 bool repairRoad(Map *map, const char *city1, const char *city2, int repairYear) {
     if (strcmp(city1, city2) == 0
-        || repairYear == 0
+        || invalidBuildYear(repairYear)
         || invalidCityName(city1)
         || invalidCityName(city2)) {
         return false;
@@ -178,8 +178,7 @@ bool repairRoad(Map *map, const char *city1, const char *city2, int repairYear) 
 
 bool newRoute(Map *map, unsigned routeId,
               const char *city1, const char *city2) {
-    if (routeId <= 0
-        || routeId >= MAX_ROUTES
+    if (invalidRouteNumber(routeId)
         || invalidCityName(city1)
         || invalidCityName(city2)
         || map->routes[routeId].start != -1
@@ -220,8 +219,7 @@ bool newRoute(Map *map, unsigned routeId,
 }
 
 bool extendRoute(Map *map, unsigned routeId, const char *city) {
-    if (routeId <= 0
-        || routeId >= MAX_ROUTES
+    if (invalidRouteNumber(routeId)
         || invalidCityName(city)
         || map->routes[routeId].start == -1)
         return false;
@@ -386,9 +384,35 @@ bool removeRoad(Map *map, const char *city1, const char *city2) {
     return true;
 }
 
+bool removeRoute(Map *map, unsigned routeId) {
+    if (invalidRouteNumber(routeId)
+        || map->routes[routeId].start == -1)
+        return false;
+
+    int route = (int)routeId;
+    int start = map->routes[route].start;
+    int finish = map->routes[route].finish;
+    int last = -1;
+    Vertex *vertex = map->graph->tab[start];
+
+    do {
+        if (last != -1) {
+            Edge *previous_destination = findEdgeTo(vertex, last);
+            removeInt(previous_destination->routes, route);
+        }
+        last = vertex->number;
+        Edge *next_destination = findEdgeWithRoute(vertex, route, last);
+        if (next_destination != NULL) {
+            removeInt(next_destination->routes, route);
+            vertex = map->graph->tab[next_destination->where];
+        }
+    } while (vertex->number != finish);
+    map->routes[route].start = -1;
+    return true;
+}
+
 char const* getRouteDescription(Map *map, unsigned routeId) {
-    if (routeId <= 0
-        || routeId >= MAX_ROUTES
+    if (invalidRouteNumber(routeId)
         || map->routes[routeId].start == -1)
         return calloc(1, sizeof(char));
 

@@ -67,3 +67,12 @@ IntList* copy(IntList *old) {
     }
     return ret;
 }
+
+void removeInt(IntList *it, int value) {
+    while (it != NULL) {
+        while (it->next != NULL && it->next->val == value) {
+                removeNextInt(it);
+        }
+        it = nextInt(it);
+    }
+}

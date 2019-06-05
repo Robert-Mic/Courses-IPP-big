@@ -19,6 +19,18 @@ bool invalidCityName(const char *city) {
     return i == 0;
 }
 
+bool invalidRouteNumber(int64_t routeID) {
+    return routeID <= 0 || routeID >= MAX_ROUTES;
+}
+
+bool invalidEdgeLength(int64_t length) {
+    return length <= 0 || length > UINT_MAX;
+}
+
+bool invalidBuildYear(int64_t year) {
+    return year == 0 || year < INT_MIN || year > INT_MAX;
+}
+
 bool extRoute(Map *map, int route, uint64_t *dist, int start, int finish) {
     if (dijkstra(map, route, dist, start, finish) == ALLOCATION_FAILURE) {
         free(dist);

@@ -49,7 +49,7 @@ void removeNextInt(IntList *it);
 
 /** @brief Returns a pointer to the next element of the list.
  *
- * @param[in] it - A pointer to the IntList list.
+ * @param[in,out] it - A pointer to the IntList list.
  * @return A pointer to the next element in the list or NULL if there is no
  * next element.
  */
@@ -62,5 +62,11 @@ IntList* nextInt(IntList *it);
  * specified parameter.
  */
 IntList* copy(IntList *old);
+
+/** Removes all instances of @p value from the @p list.
+ * @param[in,out] it - A pointer to the list.
+ * @param[in] value - The value which occurrences we want to remove.
+ */
+void removeInt(IntList *it, int value);
 
 #endif //DROGI_INTLIST_H
