@@ -395,18 +395,16 @@ bool removeRoute(Map *map, unsigned routeId) {
     int last = -1;
     Vertex *vertex = map->graph->tab[start];
 
-    do {
-        if (last != -1) {
-            Edge *previous_destination = findEdgeTo(vertex, last);
-            removeInt(previous_destination->routes, route);
-        }
-        last = vertex->number;
+    while (vertex->number != finish) {
         Edge *next_destination = findEdgeWithRoute(vertex, route, last);
-        if (next_destination != NULL) {
-            removeInt(next_destination->routes, route);
-            vertex = map->graph->tab[next_destination->where];
-        }
-    } while (vertex->number != finish);
+        removeInt(next_destination->routes, route);
+        Edge *to_current_destination = findEdgeTo(
+                map->graph->tab[next_destination->where],
+                vertex->number);
+        removeInt(to_current_destination->routes, route);
+        last = vertex->number;
+        vertex = map->graph->tab[next_destination->where];
+    }
     map->routes[route].start = -1;
     return true;
 }
